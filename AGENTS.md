@@ -15,3 +15,4 @@
 - Language state lives in `src/contexts/LanguageContext.tsx` and persists under the `agrivet_language` localStorage key — single source of truth, later syncable with `profiles.preferred_language`.
 - Reusable non-shadcn UI lives in `src/components/common/`, shells in `src/layouts/` — keeps `src/components/ui/` as untouched shadcn primitives.
 - Colors, fonts and radii are semantic tokens in `src/styles.css`; components never hard-code color classes — required for consistent theming.
+- Waitlist submission is isolated behind `src/lib/waitlist.ts` and must remain non-persistent until a secured Phase 3 backend replaces the preview adapter.
