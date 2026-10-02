@@ -56,7 +56,7 @@ function LandingPage() {
   return (
     <div>
       <section className="border-b border-border bg-secondary/45">
-        <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:min-h-0 md:grid-cols-[1.08fr_.92fr] md:py-20 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.08fr_.92fr] md:py-20 lg:px-8 lg:py-24">
           <div className="max-w-3xl">
             <Badge variant="secondary" className="mb-5 border border-border bg-background">{t("landing.eyebrow")}</Badge>
             <h1 className="text-4xl font-semibold leading-tight text-foreground sm:text-5xl lg:text-6xl">{t("landing.heroTitle")}</h1>
