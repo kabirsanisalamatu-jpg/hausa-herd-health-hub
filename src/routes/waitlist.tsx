@@ -154,7 +154,7 @@ function WaitlistPage() {
   );
 }
 
-function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
+function Field({ id, label, error, children }: { id: string; label: string; error: string | undefined; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
@@ -167,7 +167,7 @@ function Field({ id, label, error, children }: { id: string; label: string; erro
 function SelectField({ name, label, error, control, options }: {
   name: "userType" | "livestockType" | "preferredLanguage";
   label: TranslationKey;
-  error?: string;
+  error: string | undefined;
   control: ReturnType<typeof useForm<WaitlistFormData>>["control"];
   options: Array<{ value: string; label: TranslationKey }>;
 }) {
