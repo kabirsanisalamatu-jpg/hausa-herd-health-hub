@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          farm_size: string | null
+          full_name: string
+          id: string
+          livestock_types: string[]
+          location: string
+          phone: string | null
+          preferred_language: string
+          user_type: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          farm_size?: string | null
+          full_name: string
+          id?: string
+          livestock_types: string[]
+          location: string
+          phone?: string | null
+          preferred_language: string
+          user_type: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          farm_size?: string | null
+          full_name?: string
+          id?: string
+          livestock_types?: string[]
+          location?: string
+          phone?: string | null
+          preferred_language?: string
+          user_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
