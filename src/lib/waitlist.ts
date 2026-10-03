@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { TranslateFn } from "@/contexts/LanguageContext";
 
-export const USER_TYPES = ["farmer", "veterinarian", "other"] as const;
+export const USER_TYPES = ["farmer", "vet", "other"] as const;
 export const LIVESTOCK_TYPES = [
   "cattle",
   "goats",
