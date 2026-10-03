@@ -15,8 +15,9 @@ import {
   createWaitlistSchema,
   LIVESTOCK_TYPES,
   PREFERRED_LANGUAGES,
-  submitWaitlistPreview,
   USER_TYPES,
+  waitlistService,
+  type WaitlistSubmissionResult,
   type WaitlistFormData,
 } from "@/lib/waitlist";
 import type { TranslationKey } from "@/locales";
@@ -37,7 +38,7 @@ export const Route = createFileRoute("/waitlist")({
 
 const userTypeKeys: Record<(typeof USER_TYPES)[number], TranslationKey> = {
   farmer: "waitlist.userFarmer",
-  veterinarian: "waitlist.userVeterinarian",
+  vet: "waitlist.userVeterinarian",
   other: "waitlist.userOther",
 };
 const livestockKeys: Record<(typeof LIVESTOCK_TYPES)[number], TranslationKey> = {
@@ -50,9 +51,16 @@ const livestockKeys: Record<(typeof LIVESTOCK_TYPES)[number], TranslationKey> = 
   multiple: "waitlist.livestockMultiple",
 };
 
+const errorCopy: Record<Exclude<WaitlistSubmissionResult["status"], "success">, { title: TranslationKey; description: TranslationKey }> = {
+  duplicate: { title: "waitlist.duplicateTitle", description: "waitlist.duplicateDescription" },
+  invalid: { title: "waitlist.errorTitle", description: "waitlist.invalidDescription" },
+  network: { title: "waitlist.networkTitle", description: "waitlist.networkDescription" },
+  error: { title: "waitlist.errorTitle", description: "waitlist.errorDescription" },
+};
+
 function WaitlistPage() {
   const { language, t } = useTranslation();
-  const [status, setStatus] = useState<"form" | "success" | "error">("form");
+  const [status, setStatus] = useState<"form" | WaitlistSubmissionResult["status"]>("form");
   const schema = createWaitlistSchema(t);
   const {
     register,
@@ -67,10 +75,10 @@ function WaitlistPage() {
   async function onSubmit(values: WaitlistFormData) {
     setStatus("form");
     try {
-      const result = await submitWaitlistPreview(values);
-      setStatus(result.status === "development-preview" ? "success" : "error");
+      const result = await waitlistService.submit(values);
+      setStatus(result.status);
     } catch {
-      setStatus("error");
+      setStatus("network");
     }
   }
 
@@ -95,11 +103,6 @@ function WaitlistPage() {
           <Badge variant="secondary">{t("waitlist.eyebrow")}</Badge>
           <h1 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl">{t("waitlist.title")}</h1>
           <p className="mt-4 text-sm leading-7 text-muted-foreground sm:text-base">{t("waitlist.description")}</p>
-          <Alert className="mt-6 bg-background">
-            <Info className="size-4" aria-hidden="true" />
-            <AlertTitle>{t("waitlist.devMode")}</AlertTitle>
-            <AlertDescription>{t("waitlist.devModeDescription")}</AlertDescription>
-          </Alert>
           <p className="mt-6 flex gap-2 text-sm leading-6 text-muted-foreground"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />{t("safety.disclaimer")}</p>
         </div>
 
@@ -109,11 +112,11 @@ function WaitlistPage() {
             <p className="text-sm text-muted-foreground">{t("waitlist.formDescription")}</p>
           </CardHeader>
           <CardContent>
-            {status === "error" ? (
-              <Alert variant="destructive" className="mb-6" role="alert">
-                <TriangleAlert className="size-4" aria-hidden="true" />
-                <AlertTitle>{t("waitlist.errorTitle")}</AlertTitle>
-                <AlertDescription>{t("waitlist.errorDescription")}</AlertDescription>
+            {status !== "form" ? (
+              <Alert variant={status === "duplicate" ? "default" : "destructive"} className="mb-6" role="alert">
+                {status === "duplicate" ? <Info className="size-4" aria-hidden="true" /> : <TriangleAlert className="size-4" aria-hidden="true" />}
+                <AlertTitle>{t(errorCopy[status].title)}</AlertTitle>
+                <AlertDescription>{t(errorCopy[status].description)}</AlertDescription>
               </Alert>
             ) : null}
             <form onSubmit={handleSubmit(onSubmit)} noValidate className="grid gap-5" aria-busy={isSubmitting}>
