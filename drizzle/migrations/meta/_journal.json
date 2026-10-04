@@ -8,6 +8,13 @@
       "when": 1791029816015,
       "tag": "0000_create_waitlist",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791151452564,
+      "tag": "0001_auth_profiles_roles",
+      "breakpoints": true
     }
   ]
 }
