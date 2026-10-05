@@ -5,6 +5,7 @@ import { Brand } from "@/components/common/Brand";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Shared public shell: header with brand + language switcher, main region, footer.
@@ -12,6 +13,7 @@ import { useTranslation } from "@/hooks/useTranslation";
  */
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
@@ -45,8 +47,14 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 
           <div className="hidden items-center gap-2 lg:flex">
             <LanguageSwitcher />
-            <a href="/sign-in" title={t("nav.comingSoon")} className="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground">{t("nav.signIn")}</a>
-            <a href="/sign-up" title={t("nav.comingSoon")} className="inline-flex min-h-11 items-center rounded-md border border-input px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.signUp")}</a>
+            {user ? (
+              <Link to="/dashboard" className="inline-flex min-h-11 items-center rounded-md border border-input px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.dashboard")}</Link>
+            ) : (
+              <>
+                <Link to="/sign-in" className="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground">{t("nav.signIn")}</Link>
+                <Link to="/sign-up" className="inline-flex min-h-11 items-center rounded-md border border-input px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.signUp")}</Link>
+              </>
+            )}
             <Button asChild><Link to="/waitlist">{t("nav.joinWaitlist")}</Link></Button>
           </div>
 
@@ -70,10 +78,14 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               <a href="/#about" onClick={closeMenu} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.about")}</a>
               <a href="/demo" title={t("nav.comingSoon")} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.demo")}</a>
               <div className="my-2 border-t border-border" />
-              <div className="grid grid-cols-2 gap-2">
-                <a href="/sign-in" title={t("nav.comingSoon")} className="inline-flex min-h-11 items-center justify-center rounded-md border border-input text-sm font-medium">{t("nav.signIn")}</a>
-                <a href="/sign-up" title={t("nav.comingSoon")} className="inline-flex min-h-11 items-center justify-center rounded-md bg-secondary text-sm font-medium text-secondary-foreground">{t("nav.signUp")}</a>
-              </div>
+              {user ? (
+                <Link to="/dashboard" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md border border-input text-sm font-medium">{t("nav.dashboard")}</Link>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <Link to="/sign-in" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md border border-input text-sm font-medium">{t("nav.signIn")}</Link>
+                  <Link to="/sign-up" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md bg-secondary text-sm font-medium text-secondary-foreground">{t("nav.signUp")}</Link>
+                </div>
+              )}
               <Button asChild className="mt-2 min-h-11"><Link to="/waitlist" onClick={closeMenu}>{t("nav.joinWaitlist")}</Link></Button>
               <LanguageSwitcher className="mt-3 w-fit" />
             </div>
