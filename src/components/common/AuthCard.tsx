@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 /** Centered card shell shared by the sign-in, sign-up and password pages. */
@@ -8,9 +8,7 @@ export function AuthCard({ title, description, children }: { title: string; desc
     <section className="mx-auto w-full max-w-md px-4 py-10 sm:py-16">
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle as-child="true" className="text-2xl">
-            <h1>{title}</h1>
-          </CardTitle>
+          <h1 className="text-2xl font-semibold leading-tight">{title}</h1>
           {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
         </CardHeader>
         <CardContent>{children}</CardContent>
