@@ -71,6 +71,57 @@ export type Database = {
         }
         Relationships: []
       }
+      vet_verifications: {
+        Row: {
+          created_at: string
+          id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["vet_verification_status"]
+          submitted_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["vet_verification_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["vet_verification_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vet_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vet_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       waitlist: {
         Row: {
           created_at: string
@@ -122,9 +173,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      review_vet: {
+        Args: {
+          _reason?: string
+          _status: Database["public"]["Enums"]["vet_verification_status"]
+          _vet_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "farmer" | "vet" | "admin" | "content_editor" | "super_admin"
+      vet_verification_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -253,6 +313,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["farmer", "vet", "admin", "content_editor", "super_admin"],
+      vet_verification_status: ["pending", "approved", "rejected"],
     },
   },
 } as const
