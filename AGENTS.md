@@ -16,3 +16,7 @@
 - Reusable non-shadcn UI lives in `src/components/common/`, shells in `src/layouts/` — keeps `src/components/ui/` as untouched shadcn primitives.
 - Colors, fonts and radii are semantic tokens in `src/styles.css`; components never hard-code color classes — required for consistent theming.
 - Waitlist submission goes only through `waitlistService` in `src/lib/waitlist.ts`; the `waitlist` table is insert-only for anon (no SELECT/UPDATE/DELETE grants or policies) — keeps personal data private and DB errors mapped to safe messages.
+- Auth state (session, profile, role) lives only in `src/contexts/AuthContext.tsx` via `useAuth()`; auth errors go through `authErrorKey()` in `src/lib/auth.ts` — one auth source, no raw errors in UI.
+- Roles live in `public.user_roles` and are written only by the `handle_new_user` trigger (farmer/vet only) or trusted SQL; clients have SELECT-own only — prevents self-promotion.
+- `profiles` grants UPDATE on editable columns only (name, phone, location, language, avatar) — id/email can't be changed by clients.
+- Signed-in pages live under `src/routes/_authenticated/` (client-only gate redirecting to `/sign-in`) — session is in browser storage.
