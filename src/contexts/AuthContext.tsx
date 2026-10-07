@@ -15,6 +15,9 @@ export interface AuthContextValue {
   profile: Profile | null;
   role: AppRole | null;
   loading: boolean;
+  /** "ready" once profile/role were read from the database; "error" if that read failed. */
+  accountStatus: "idle" | "loading" | "ready" | "error";
+  refreshAccount: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<Result>;
   signUp: (data: SignUpData) => Promise<Result>;
   signOut: () => Promise<void>;
@@ -32,13 +35,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+  const [accountStatus, setAccountStatus] = useState<AuthContextValue["accountStatus"]>("idle");
   const syncedLanguage = useRef<string | null>(null);
 
   const loadAccount = useCallback(async (userId: string) => {
-    const [{ data: profileRow }, { data: roleRows }] = await Promise.all([
+    setAccountStatus("loading");
+    const [{ data: profileRow, error: pErr }, { data: roleRows, error: rErr }] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
       supabase.from("user_roles").select("role").eq("user_id", userId),
-    ]);
+    ]).catch(() => [{ data: null, error: true }, { data: null, error: true }] as const);
+    if (pErr || rErr) {
+      setProfile(null);
+      setRole(null);
+      setAccountStatus("error");
+      return;
+    }
     setProfile(profileRow ?? null);
     const roles = (roleRows ?? []).map((r) => r.role).filter((r): r is AppRole => (APP_ROLES as readonly string[]).includes(r));
     setRole(ROLE_PRIORITY.find((r) => roles.includes(r)) ?? null);
@@ -47,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       syncedLanguage.current = profileRow.preferred_language;
       if (profileRow.preferred_language === "ha" || profileRow.preferred_language === "en") setLanguage(profileRow.preferred_language);
     }
+    setAccountStatus("ready");
   }, [setLanguage]);
 
   useEffect(() => {
@@ -55,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (event === "SIGNED_OUT" || !next) {
         setProfile(null);
         setRole(null);
+        setAccountStatus("idle");
         syncedLanguage.current = null;
         return;
       }
@@ -80,6 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     syncedLanguage.current = language;
     void supabase.from("profiles").update({ preferred_language: language }).eq("id", profile.id);
   }, [language, profile]);
+
+  const refreshAccount = useCallback(async () => {
+    if (session) await loadAccount(session.user.id);
+  }, [session, loadAccount]);
 
   const signIn = useCallback<AuthContextValue["signIn"]>(async (email, password) => {
     try {
@@ -144,8 +161,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ session, user: session?.user ?? null, profile, role, loading, signIn, signUp, signOut, resetPassword, updatePassword }),
-    [session, profile, role, loading, signIn, signUp, signOut, resetPassword, updatePassword],
+    () => ({ session, user: session?.user ?? null, profile, role, loading, accountStatus, refreshAccount, signIn, signUp, signOut, resetPassword, updatePassword }),
+    [session, profile, role, loading, accountStatus, refreshAccount, signIn, signUp, signOut, resetPassword, updatePassword],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
