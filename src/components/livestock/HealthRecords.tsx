@@ -271,7 +271,7 @@ export function VaccinationSection({ livestockId, canAdd }: { livestockId: strin
           {q.data.map((v) => editing !== null && editing !== "new" && editing.id === v.id ? (
             <li key={v.id}><VaccinationFormCard livestockId={livestockId} record={v} onDone={() => void done(true)} onCancel={() => setEditing(null)} /></li>
           ) : (
-            <li key={v.id}>
+            <li key={v.id} id={`vaccination-${v.id}`} className="scroll-mt-20">
               <Card className="shadow-sm">
                 <CardContent className="grid gap-3 p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
