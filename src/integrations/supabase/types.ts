@@ -14,6 +14,269 @@ export type Database = {
   }
   public: {
     Tables: {
+      care_appointments: {
+        Row: {
+          consultation_type: string
+          created_at: string
+          currency: string | null
+          ends_at: string
+          farmer_id: string
+          farmer_name: string
+          fee: number | null
+          id: string
+          livestock_id: string
+          location: string
+          reason: string
+          slot_id: string
+          starts_at: string
+          status: string
+          updated_at: string
+          vet_id: string
+          vet_name: string
+        }
+        Insert: {
+          consultation_type: string
+          created_at?: string
+          currency?: string | null
+          ends_at: string
+          farmer_id: string
+          farmer_name: string
+          fee?: number | null
+          id?: string
+          livestock_id: string
+          location: string
+          reason: string
+          slot_id: string
+          starts_at: string
+          status?: string
+          updated_at?: string
+          vet_id: string
+          vet_name: string
+        }
+        Update: {
+          consultation_type?: string
+          created_at?: string
+          currency?: string | null
+          ends_at?: string
+          farmer_id?: string
+          farmer_name?: string
+          fee?: number | null
+          id?: string
+          livestock_id?: string
+          location?: string
+          reason?: string
+          slot_id?: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          vet_id?: string
+          vet_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_appointments_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_appointments_livestock_id_farmer_id_fkey"
+            columns: ["livestock_id", "farmer_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id", "owner_id"]
+          },
+          {
+            foreignKeyName: "care_appointments_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "care_slots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_appointments_vet_id_fkey"
+            columns: ["vet_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_audit: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string
+          farmer_id: string
+          id: string
+          livestock_id: string
+          record_id: string
+          vet_id: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string
+          farmer_id: string
+          id?: string
+          livestock_id: string
+          record_id: string
+          vet_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string
+          farmer_id?: string
+          id?: string
+          livestock_id?: string
+          record_id?: string
+          vet_id?: string
+        }
+        Relationships: []
+      }
+      care_notifications: {
+        Row: {
+          appointment_id: string | null
+          created_at: string
+          dedupe_key: string
+          id: string
+          kind: string
+          read_at: string | null
+          recipient_id: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          created_at?: string
+          dedupe_key: string
+          id?: string
+          kind: string
+          read_at?: string | null
+          recipient_id: string
+        }
+        Update: {
+          appointment_id?: string | null
+          created_at?: string
+          dedupe_key?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          recipient_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_notifications_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "care_appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_shares: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          farmer_id: string
+          id: string
+          livestock_id: string
+          revoked_at: string | null
+          scopes: string[]
+          vet_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          farmer_id: string
+          id?: string
+          livestock_id: string
+          revoked_at?: string | null
+          scopes: string[]
+          vet_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          farmer_id?: string
+          id?: string
+          livestock_id?: string
+          revoked_at?: string | null
+          scopes?: string[]
+          vet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_shares_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_shares_livestock_id_farmer_id_fkey"
+            columns: ["livestock_id", "farmer_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id", "owner_id"]
+          },
+          {
+            foreignKeyName: "care_shares_vet_id_fkey"
+            columns: ["vet_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_slots: {
+        Row: {
+          consultation_type: string
+          created_at: string
+          ends_at: string
+          id: string
+          location: string
+          published: boolean
+          starts_at: string
+          vet_id: string
+        }
+        Insert: {
+          consultation_type: string
+          created_at?: string
+          ends_at: string
+          id?: string
+          location?: string
+          published?: boolean
+          starts_at: string
+          vet_id: string
+        }
+        Update: {
+          consultation_type?: string
+          created_at?: string
+          ends_at?: string
+          id?: string
+          location?: string
+          published?: boolean
+          starts_at?: string
+          vet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_slots_vet_id_fkey"
+            columns: ["vet_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_events: {
         Row: {
           created_at: string
@@ -325,6 +588,65 @@ export type Database = {
           },
         ]
       }
+      vet_public_profiles: {
+        Row: {
+          biography: string
+          consultation_types: string[]
+          currency: string | null
+          display_name: string
+          fee: number | null
+          languages: string[]
+          licence: string
+          location: string
+          published: boolean
+          qualifications: string
+          specialties: string[]
+          species: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          biography?: string
+          consultation_types?: string[]
+          currency?: string | null
+          display_name: string
+          fee?: number | null
+          languages?: string[]
+          licence?: string
+          location?: string
+          published?: boolean
+          qualifications?: string
+          specialties?: string[]
+          species?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          biography?: string
+          consultation_types?: string[]
+          currency?: string | null
+          display_name?: string
+          fee?: number | null
+          languages?: string[]
+          licence?: string
+          location?: string
+          published?: boolean
+          qualifications?: string
+          specialties?: string[]
+          species?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vet_public_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vet_verifications: {
         Row: {
           created_at: string
@@ -420,6 +742,38 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      care_book: {
+        Args: { _livestock: string; _reason: string; _slot: string }
+        Returns: string
+      }
+      care_can_access: { Args: { _appointment: string }; Returns: boolean }
+      care_has_share: {
+        Args: {
+          _farmer: string
+          _livestock: string
+          _scope?: string
+          _vet: string
+        }
+        Returns: boolean
+      }
+      care_set_share: {
+        Args: {
+          _expires?: string
+          _livestock: string
+          _revoke?: boolean
+          _scopes: string[]
+          _vet: string
+        }
+        Returns: string
+      }
+      care_shared_records: {
+        Args: { _farmer: string; _livestock: string }
+        Returns: Json
+      }
+      care_transition: {
+        Args: { _id: string; _status: string }
+        Returns: undefined
+      }
       farm_today: { Args: never; Returns: string }
       farmer_reminders: {
         Args: { _horizon?: number; _today: string }
@@ -454,6 +808,7 @@ export type Database = {
           vaccination_records: number
         }[]
       }
+      is_approved_vet: { Args: { _vet: string }; Returns: boolean }
       livestock_summary: {
         Args: never
         Returns: {

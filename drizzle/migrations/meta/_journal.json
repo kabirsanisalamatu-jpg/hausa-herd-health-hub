@@ -64,6 +64,13 @@
       "when": 1792352555523,
       "tag": "0008_0008_farm_date_and_reminder_fixes",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792354363453,
+      "tag": "0009_veterinary_care_foundation",
+      "breakpoints": true
     }
   ]
 }
