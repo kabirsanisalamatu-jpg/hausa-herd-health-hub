@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { ArchiveRestore, Archive, ArrowLeft, Pencil } from "lucide-react";
+import { HealthHistorySection, VaccinationSection } from "@/components/livestock/HealthRecords";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
 import {
@@ -151,6 +152,8 @@ function LivestockDetailPage() {
         </CardContent>
       </Card>
 
+      <HealthHistorySection livestockId={id} canAdd={!archived} />
+      <VaccinationSection livestockId={id} canAdd={!archived} />
       <p className="rounded-md border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">{t("livestock.detail.healthNotice")}</p>
     </div>
   );

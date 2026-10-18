@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { ComingSoonGrid } from "@/components/common/ComingSoonGrid";
+import { HealthSummary } from "@/components/livestock/HealthSummary";
 import { LivestockSummary } from "@/components/livestock/LivestockSummary";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -22,12 +23,14 @@ function FarmerHome() {
         </div>
         <LivestockSummary />
       </section>
+      <section aria-labelledby="health-overview-heading" className="grid gap-4">
+        <h2 id="health-overview-heading" className="text-lg font-semibold">{t("farmerHome.healthTitle")}</h2>
+        <HealthSummary />
+      </section>
       <section aria-labelledby="coming-heading" className="grid gap-4">
         <h2 id="coming-heading" className="text-lg font-semibold">{t("farmerHome.comingTitle")}</h2>
         <ComingSoonGrid
           items={[
-            { titleKey: "farmer.feature.records", descriptionKey: "farmer.feature.recordsDesc" },
-            { titleKey: "farmer.feature.vaccinations", descriptionKey: "farmer.feature.vaccinationsDesc" },
             { titleKey: "farmer.feature.treatments", descriptionKey: "farmer.feature.treatmentsDesc" },
             { titleKey: "farmer.feature.reminders", descriptionKey: "farmer.feature.remindersDesc" },
             { titleKey: "farmer.feature.askVet", descriptionKey: "farmer.feature.askVetDesc" },

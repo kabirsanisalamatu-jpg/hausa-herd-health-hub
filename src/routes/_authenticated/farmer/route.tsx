@@ -29,6 +29,7 @@ function FarmerLayout() {
         navItems={[
           { to: "/farmer", labelKey: "nav.myWorkspace" },
           { to: "/farmer/livestock", labelKey: "nav.livestock" },
+          { to: "/farmer/vaccinations", labelKey: "nav.vaccinations" },
           { to: "/profile", labelKey: "nav.profile" },
         ]}
       >
