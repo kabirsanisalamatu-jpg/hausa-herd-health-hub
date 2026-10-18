@@ -420,6 +420,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      farm_today: { Args: never; Returns: string }
       farmer_reminders: {
         Args: { _horizon?: number; _today: string }
         Returns: {
