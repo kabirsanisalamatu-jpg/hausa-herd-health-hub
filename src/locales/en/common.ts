@@ -663,6 +663,7 @@ export const en = {
   "reminders.followUpOn": "Follow-up {{date}}",
   "reminders.overdueNote": "\"Date passed\" only means a saved date has gone by. It does not prove a treatment was missed or that an animal is unprotected.",
   "vaccination.status.superseded": "Replaced by a later dose",
+  "treatment.view.followUp": "Follow-up date",
 } as const;
 
 export type TranslationKey = keyof typeof en;

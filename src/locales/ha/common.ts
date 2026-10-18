@@ -656,4 +656,5 @@ export const ha: Dictionary = {
   "reminders.followUpOn": "Sake dubawa {{date}}",
   "reminders.overdueNote": "\"Ranar ta wuce\" na nufin kawai ranar da ka adana ta wuce. Ba ya tabbatar da cewa an rasa magani ko cewa dabba ba ta da kariya.",
   "vaccination.status.superseded": "An maye gurbinsa da allura ta baya",
+  "treatment.view.followUp": "Ranar sake dubawa",
 };
