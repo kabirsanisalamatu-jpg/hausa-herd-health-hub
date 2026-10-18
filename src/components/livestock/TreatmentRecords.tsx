@@ -43,17 +43,17 @@ function TreatmentFormCard({ livestockId, record, onDone, onCancel }: { livestoc
   const e = f.errors;
   const v = f.v;
   const input = (k: keyof TreatmentForm, label: string, max: number, hint?: string) => (
-    <AuthField id={`tr-${k}`} label={label} hint={hint} error={e[k]}>
+    <AuthField id={`tr-${k}`} label={label} {...(hint ? { hint } : {})} error={e[k]}>
       <Input {...fieldA11y(`tr-${k}`, e[k])} value={v[k]} maxLength={max} onChange={(x) => f.set(k, x.target.value)} className="min-h-11" />
     </AuthField>
   );
   const area = (k: keyof TreatmentForm, label: string, max: number, hint?: string) => (
-    <AuthField id={`tr-${k}`} label={label} hint={hint} error={e[k]}>
+    <AuthField id={`tr-${k}`} label={label} {...(hint ? { hint } : {})} error={e[k]}>
       <Textarea {...fieldA11y(`tr-${k}`, e[k])} value={v[k]} maxLength={max} rows={3} onChange={(x) => f.set(k, x.target.value)} />
     </AuthField>
   );
-  const date = (k: keyof TreatmentForm, label: string, opts: { max?: string; min?: string; hint?: string }) => (
-    <AuthField id={`tr-${k}`} label={label} hint={opts.hint} error={e[k]}>
+  const date = (k: keyof TreatmentForm, label: string, opts: { max?: string | undefined; min?: string | undefined; hint?: string | undefined }) => (
+    <AuthField id={`tr-${k}`} label={label} {...(opts.hint ? { hint: opts.hint } : {})} error={e[k]}>
       <Input {...fieldA11y(`tr-${k}`, e[k])} type="date" max={opts.max} min={opts.min ?? "1950-01-01"} value={v[k]} onChange={(x) => f.set(k, x.target.value)} className="min-h-11" />
     </AuthField>
   );
