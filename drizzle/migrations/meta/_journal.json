@@ -50,6 +50,13 @@
       "when": 1792351312093,
       "tag": "0006_0006_treatments_reminders",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792351838745,
+      "tag": "0007_0007_treatment_grants_hardening",
+      "breakpoints": true
     }
   ]
 }

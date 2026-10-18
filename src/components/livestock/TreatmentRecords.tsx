@@ -150,7 +150,7 @@ export function TreatmentSection({ livestockId, canAdd }: { livestockId: string;
                     <Field label={t("treatment.field.dose")} value={r.dose_and_instructions} />
                     <Field label={t("treatment.view.administered")} value={r.administration_date || r.administered_by
                       ? [r.administration_date ? fmt(r.administration_date) : null, r.administered_by].filter(Boolean).join(" · ") : null} />
-                    <Field label={t("treatment.field.followUp")} value={r.follow_up_date ? fmt(r.follow_up_date) : null} />
+                    <Field label={t("treatment.view.followUp")} value={r.follow_up_date ? fmt(r.follow_up_date) : null} />
                     <Field label={t("livestock.field.notes")} value={r.notes} />
                   </dl>
                   <p className="text-xs text-muted-foreground">{t("treatment.view.recordedByUser")}</p>
