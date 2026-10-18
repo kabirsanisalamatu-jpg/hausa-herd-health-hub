@@ -36,6 +36,13 @@
       "when": 1792349238983,
       "tag": "0004_0004_livestock_type_immutable",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792350114912,
+      "tag": "0005_0005_health_vaccinations",
+      "breakpoints": true
     }
   ]
 }
