@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      care_administrations: {
+        Row: {
+          administered_by: string
+          administration_date: string
+          created_at: string
+          farmer_id: string
+          id: string
+          notes: string
+          prescription_id: string
+        }
+        Insert: {
+          administered_by: string
+          administration_date: string
+          created_at?: string
+          farmer_id: string
+          id?: string
+          notes: string
+          prescription_id: string
+        }
+        Update: {
+          administered_by?: string
+          administration_date?: string
+          created_at?: string
+          farmer_id?: string
+          id?: string
+          notes?: string
+          prescription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_administrations_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_administrations_prescription_id_fkey"
+            columns: ["prescription_id"]
+            isOneToOne: false
+            referencedRelation: "care_prescriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       care_appointments: {
         Row: {
           consultation_type: string
@@ -136,6 +181,139 @@ export type Database = {
         }
         Relationships: []
       }
+      care_blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_consultations: {
+        Row: {
+          appointment_id: string
+          assessment: string
+          author_id: string
+          created_at: string
+          farmer_report: string
+          follow_up_date: string | null
+          id: string
+          recommendations: string
+          supersedes_id: string | null
+        }
+        Insert: {
+          appointment_id: string
+          assessment: string
+          author_id: string
+          created_at?: string
+          farmer_report: string
+          follow_up_date?: string | null
+          id?: string
+          recommendations: string
+          supersedes_id?: string | null
+        }
+        Update: {
+          appointment_id?: string
+          assessment?: string
+          author_id?: string
+          created_at?: string
+          farmer_report?: string
+          follow_up_date?: string | null
+          id?: string
+          recommendations?: string
+          supersedes_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_consultations_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "care_appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_consultations_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_consultations_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: true
+            referencedRelation: "care_consultations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_messages: {
+        Row: {
+          appointment_id: string
+          body: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          appointment_id: string
+          body: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          appointment_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_messages_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "care_appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       care_notifications: {
         Row: {
           appointment_id: string | null
@@ -175,6 +353,144 @@ export type Database = {
           {
             foreignKeyName: "care_notifications_recipient_id_fkey"
             columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_prescriptions: {
+        Row: {
+          appointment_id: string
+          author_id: string
+          consultation_id: string
+          dose: string
+          duration: string
+          frequency: string
+          id: string
+          instructions: string
+          issued_at: string
+          licence: string
+          medicine: string
+          qualifications: string
+          route: string
+          supersedes_id: string | null
+          vet_name: string
+          withdrawal_guidance: string
+        }
+        Insert: {
+          appointment_id: string
+          author_id: string
+          consultation_id: string
+          dose: string
+          duration: string
+          frequency: string
+          id?: string
+          instructions: string
+          issued_at?: string
+          licence: string
+          medicine: string
+          qualifications: string
+          route: string
+          supersedes_id?: string | null
+          vet_name: string
+          withdrawal_guidance: string
+        }
+        Update: {
+          appointment_id?: string
+          author_id?: string
+          consultation_id?: string
+          dose?: string
+          duration?: string
+          frequency?: string
+          id?: string
+          instructions?: string
+          issued_at?: string
+          licence?: string
+          medicine?: string
+          qualifications?: string
+          route?: string
+          supersedes_id?: string | null
+          vet_name?: string
+          withdrawal_guidance?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_prescriptions_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "care_appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_prescriptions_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_prescriptions_consultation_id_fkey"
+            columns: ["consultation_id"]
+            isOneToOne: false
+            referencedRelation: "care_consultations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_prescriptions_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: true
+            referencedRelation: "care_prescriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_reports: {
+        Row: {
+          appointment_id: string
+          created_at: string
+          id: string
+          reason: string
+          reported_id: string
+          reporter_id: string
+          status: string
+        }
+        Insert: {
+          appointment_id: string
+          created_at?: string
+          id?: string
+          reason: string
+          reported_id: string
+          reporter_id: string
+          status?: string
+        }
+        Update: {
+          appointment_id?: string
+          created_at?: string
+          id?: string
+          reason?: string
+          reported_id?: string
+          reporter_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_reports_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "care_appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_reports_reported_id_fkey"
+            columns: ["reported_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -747,6 +1063,8 @@ export type Database = {
         Returns: string
       }
       care_can_access: { Args: { _appointment: string }; Returns: boolean }
+      care_clinical_author: { Args: { _id: string }; Returns: boolean }
+      care_followup_notifications: { Args: never; Returns: undefined }
       care_has_share: {
         Args: {
           _farmer: string
@@ -755,6 +1073,48 @@ export type Database = {
           _vet: string
         }
         Returns: boolean
+      }
+      care_issue_prescription: {
+        Args: {
+          _appointment: string
+          _confirmed: boolean
+          _consultation: string
+          _dose: string
+          _duration: string
+          _frequency: string
+          _instructions: string
+          _medicine: string
+          _route: string
+          _supersedes?: string
+          _withdrawal: string
+        }
+        Returns: string
+      }
+      care_not_blocked: { Args: { _a: string; _b: string }; Returns: boolean }
+      care_read_messages: { Args: { _appointment: string }; Returns: undefined }
+      care_record_administration: {
+        Args: {
+          _by: string
+          _date: string
+          _notes: string
+          _prescription: string
+        }
+        Returns: string
+      }
+      care_save_consultation: {
+        Args: {
+          _appointment: string
+          _assessment: string
+          _follow_up?: string
+          _recommendations: string
+          _report: string
+          _supersedes?: string
+        }
+        Returns: string
+      }
+      care_send_message: {
+        Args: { _appointment: string; _body: string }
+        Returns: string
       }
       care_set_share: {
         Args: {

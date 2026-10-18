@@ -71,6 +71,13 @@
       "when": 1792354363453,
       "tag": "0009_veterinary_care_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792354404730,
+      "tag": "0010_care_messages_consultations_prescriptions",
+      "breakpoints": true
     }
   ]
 }
