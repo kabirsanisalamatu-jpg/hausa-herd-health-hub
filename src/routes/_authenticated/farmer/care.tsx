@@ -1,3 +1,4 @@
+import type { TranslationKey } from '@/locales';
 import { useState } from 'react';
 import { createFileRoute,Link } from '@tanstack/react-router';
 import { useQuery,useQueryClient } from '@tanstack/react-query';
@@ -13,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
 export const Route=createFileRoute('/_authenticated/farmer/care')({head:()=>careHead('Farmer veterinary care','Private livestock sharing, veterinary appointments, conversations and AI triage history.'),component:FarmerCare});
 function FarmerCare(){
- const {t,language}=useTranslation();const qc=useQueryClient();const triage=useServerFn(requestTriage);
+ const {t:translate,language}=useTranslation(); const t=(key:string)=>translate(key as TranslationKey);const qc=useQueryClient();const triage=useServerFn(requestTriage);
  const [animal,setAnimal]=useState('');const [vet,setVet]=useState('');const [scopes,setScopes]=useState<string[]>([]);const [expires,setExpires]=useState('');const [slot,setSlot]=useState('');const [reason,setReason]=useState('');const [symptoms,setSymptoms]=useState('');const [consent,setConsent]=useState(false);const [busy,setBusy]=useState(false);const [notice,setNotice]=useState('');const [open,setOpen]=useState<Appointment|null>(null);
  const q=useQuery({queryKey:['care','farmer'],queryFn:async()=>{const [vets,animals,shares,appointments,history]=await Promise.all([careService.directory(),careService.animals(),careService.shares(),careService.appointments(),careService.aiHistory()]);return {vets,animals,shares,appointments,history};},retry:1,refetchInterval:15000});
  const slots=useQuery({queryKey:['care','slots',vet],queryFn:()=>careService.slots(vet),enabled:!!vet,retry:1});
