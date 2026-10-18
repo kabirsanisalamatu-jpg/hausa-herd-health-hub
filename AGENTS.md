@@ -20,3 +20,5 @@
 - Roles live in `public.user_roles` and are written only by the `handle_new_user` trigger (farmer/vet only) or trusted SQL; clients have SELECT-own only — prevents self-promotion.
 - `profiles` grants UPDATE on editable columns only (name, phone, location, language, avatar) — id/email can't be changed by clients.
 - Signed-in pages live under `src/routes/_authenticated/` (client-only gate redirecting to `/sign-in`) — session is in browser storage.
+- Livestock data goes only through `livestockService` in `src/lib/livestock.ts`; the `livestock` table is owner-only via RLS (farmer role + `owner_id = auth.uid()`), owner defaults from the session and is immutable, no DELETE (soft archive) — ownership is enforced in the database, not the UI.
+- Livestock form/summary UI lives in `src/components/livestock/`; farmer pages live under `src/routes/_authenticated/farmer/` behind the farmer `RoleGate` layout — one gate for the whole subtree.

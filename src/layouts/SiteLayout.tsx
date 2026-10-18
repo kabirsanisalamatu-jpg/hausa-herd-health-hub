@@ -14,6 +14,7 @@ const ROLE_NAV: Record<AppRole, { to: string; labelKey: TranslationKey }[]> = {
   farmer: [
     { to: "/dashboard", labelKey: "nav.dashboard" },
     { to: "/farmer", labelKey: "nav.myWorkspace" },
+    { to: "/farmer/livestock", labelKey: "nav.livestock" },
     { to: "/profile", labelKey: "nav.profile" },
   ],
   vet: [
