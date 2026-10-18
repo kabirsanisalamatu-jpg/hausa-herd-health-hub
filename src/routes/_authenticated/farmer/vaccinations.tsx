@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslation } from "@/hooks/useTranslation";
-import { DUE_FILTERS, dueStatus, healthKeys, healthService } from "@/lib/health";
+import { DUE_FILTERS, dueStatus, healthKeys, healthService, supersededIds, type VaccinationDisplayStatus } from "@/lib/health";
 import { displayName, todayIso } from "@/lib/livestock";
 import { cn } from "@/lib/utils";
 import type { TranslationKey } from "@/locales";
@@ -37,7 +37,9 @@ function VaccinationsPage() {
   const q = useQuery({ queryKey: healthKeys.overview, queryFn: healthService.overview, retry: 1 });
   const today = todayIso();
 
-  const rows = (q.data ?? []).map((r) => ({ ...r, due: dueStatus(r.next_due_date, today) }));
+  const data = q.data ?? [];
+  const replaced = supersededIds(data);
+  const rows = data.map((r) => ({ ...r, due: (replaced.has(r.id) ? "superseded" : dueStatus(r.next_due_date, today)) as VaccinationDisplayStatus }));
   const counts = Object.fromEntries(DUE_FILTERS.map((f) => [f, f === "all" ? rows.length : rows.filter((r) => r.due === f).length]));
   const shown = view === "all" ? rows : rows.filter((r) => r.due === view);
 

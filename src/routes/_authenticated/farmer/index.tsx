@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { ComingSoonGrid } from "@/components/common/ComingSoonGrid";
 import { HealthSummary } from "@/components/livestock/HealthSummary";
+import { Reminders } from "@/components/livestock/Reminders";
 import { LivestockSummary } from "@/components/livestock/LivestockSummary";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -23,6 +24,10 @@ function FarmerHome() {
         </div>
         <LivestockSummary />
       </section>
+      <section aria-labelledby="reminders-heading" className="grid gap-4">
+        <h2 id="reminders-heading" className="text-lg font-semibold">{t("reminders.title")}</h2>
+        <Reminders />
+      </section>
       <section aria-labelledby="health-overview-heading" className="grid gap-4">
         <h2 id="health-overview-heading" className="text-lg font-semibold">{t("farmerHome.healthTitle")}</h2>
         <HealthSummary />
@@ -31,8 +36,6 @@ function FarmerHome() {
         <h2 id="coming-heading" className="text-lg font-semibold">{t("farmerHome.comingTitle")}</h2>
         <ComingSoonGrid
           items={[
-            { titleKey: "farmer.feature.treatments", descriptionKey: "farmer.feature.treatmentsDesc" },
-            { titleKey: "farmer.feature.reminders", descriptionKey: "farmer.feature.remindersDesc" },
             { titleKey: "farmer.feature.askVet", descriptionKey: "farmer.feature.askVetDesc" },
             { titleKey: "farmer.feature.ai", descriptionKey: "farmer.feature.aiDesc" },
             { titleKey: "farmer.feature.marketplace", descriptionKey: "farmer.feature.marketplaceDesc" },
