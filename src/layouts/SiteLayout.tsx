@@ -130,6 +130,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         {menuOpen ? (
           <nav id="mobile-navigation" className="border-t border-border bg-background px-4 py-4 lg:hidden" aria-label={t("nav.menu")}>
             <div className="mx-auto grid max-w-7xl gap-1">
+              <Link to="/veterinarians" onClick={closeMenu} className="flex min-h-11 items-center px-3 text-sm font-medium">{t("care.directory")}</Link>
               <a href="/#features" onClick={closeMenu} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.features")}</a>
               <a href="/#how-it-works" onClick={closeMenu} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.howItWorks")}</a>
               <a href="/#about" onClick={closeMenu} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.about")}</a>

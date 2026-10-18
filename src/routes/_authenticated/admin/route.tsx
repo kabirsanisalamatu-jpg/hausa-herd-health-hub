@@ -21,6 +21,7 @@ function AdminLayout() {
           { to: "/admin", labelKey: "nav.admin" },
           { to: "/admin/waitlist", labelKey: "nav.waitlistReview" },
           { to: "/admin/veterinarians", labelKey: "nav.veterinarians" },
+          { to: "/admin/reports", labelKey: "care.reports" },
           { to: "/profile", labelKey: "nav.profile" },
         ]}
       >
