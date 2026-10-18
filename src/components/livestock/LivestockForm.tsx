@@ -23,7 +23,7 @@ function ChoiceSelect({ id, value, onChange, options, allowNone, invalid, descri
 }) {
   const { t } = useTranslation();
   return (
-    <Select value={value || (allowNone ? NONE : undefined)} onValueChange={(v) => { if (v) onChange(v === NONE ? "" : v); }}>
+    <Select value={value || (allowNone ? NONE : "")} onValueChange={(v) => { if (v) onChange(v === NONE ? "" : v); }}>
       <SelectTrigger id={id} className="min-h-11" aria-invalid={invalid} aria-describedby={describedBy}>
         <SelectValue placeholder={t("livestock.field.choose")} />
       </SelectTrigger>
