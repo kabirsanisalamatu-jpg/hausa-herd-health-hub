@@ -84,7 +84,7 @@ function AdminVetsPage() {
     const { error } = await supabase.rpc("review_vet", {
       _vet_id: vetId,
       _status: status,
-      _reason: rejectionReason || undefined,
+      ...(rejectionReason ? { _reason: rejectionReason } : {}),
     });
     setBusyId(null);
     if (error) {

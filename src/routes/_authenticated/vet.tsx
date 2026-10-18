@@ -4,6 +4,7 @@ import { BadgeCheck, Clock, XCircle } from "lucide-react";
 import { ComingSoonGrid } from "@/components/common/ComingSoonGrid";
 import { LoadingState } from "@/components/common/LoadingState";
 import { RoleGate } from "@/components/common/RoleGate";
+import { WorkspaceLayout } from "@/layouts/WorkspaceLayout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
