@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { AuthCard, AuthField, fieldA11y } from "@/components/common/AuthCard";
+import { AuthCard, AuthField } from "@/components/common/AuthCard";
 import { LoadingState } from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -87,15 +88,15 @@ function ProfilePage() {
           </p>
         ) : null}
 
-        <AuthField id="profile-name" label={t("auth.fullName")}>
+        <AuthField id="profile-name" label={t("auth.fullName")} error={undefined}>
           <Input id="profile-name" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={100} required className="min-h-11" />
         </AuthField>
 
-        <AuthField id="profile-phone" label={t("auth.phone")}>
+        <AuthField id="profile-phone" label={t("auth.phone")} error={undefined}>
           <Input id="profile-phone" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} inputMode="tel" className="min-h-11" />
         </AuthField>
 
-        <AuthField id="profile-location" label={t("auth.location")}>
+        <AuthField id="profile-location" label={t("auth.location")} error={undefined}>
           <Input id="profile-location" value={location} onChange={(e) => setLocation(e.target.value)} maxLength={120} className="min-h-11" />
         </AuthField>
 
@@ -117,7 +118,7 @@ function ProfilePage() {
 
         <div className="grid gap-2">
           <Label htmlFor="profile-email">{t("profile.emailNote")}</Label>
-          <Input id="profile-email" value={profile.email} readOnly disabled className="min-h-11" {...fieldA11y("profile-email")} />
+          <Input id="profile-email" value={profile.email} readOnly disabled className="min-h-11" />
         </div>
 
         <div className="grid gap-2">
