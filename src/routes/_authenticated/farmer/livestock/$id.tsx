@@ -67,7 +67,7 @@ function LivestockDetailPage() {
   const age = describeAge(r, t);
   const rows: [TranslationKey, string | null][] = [
     ["livestock.field.species", t(`livestock.species.${r.species}` as TranslationKey)],
-    ["livestock.recordType.label", t(r.record_type === "group" ? "livestock.recordType.group" : "livestock.recordType.individual")],
+    ["livestock.filter.type", t(r.record_type === "group" ? "livestock.recordType.group" : "livestock.recordType.individual")],
     ["livestock.field.quantity", r.record_type === "group" ? r.quantity.toLocaleString() : null],
     ["livestock.field.name", r.name],
     ["livestock.field.code", r.identification_code],
