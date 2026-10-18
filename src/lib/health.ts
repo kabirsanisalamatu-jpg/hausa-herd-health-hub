@@ -12,6 +12,8 @@ export const EVENT_TYPES = ["observation", "illness_report", "injury", "vet_visi
 export const HEALTH_LIMITS = { title: 120, description: 2000, person: 100, vaccine: 120, batch: 60, notes: 1000 } as const;
 export const DUE_FILTERS = ["all", "upcoming", "due_today", "overdue", "no_due"] as const;
 export type DueStatus = "upcoming" | "due_today" | "overdue" | "no_due";
+/** Display-only state for a vaccination replaced by a later dose of the same vaccine on the same livestock. */
+export type VaccinationDisplayStatus = DueStatus | "superseded";
 export type DueFilter = (typeof DUE_FILTERS)[number];
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
@@ -27,6 +29,24 @@ export function dueStatus(nextDue: string | null, today: string = todayIso()): D
   if (nextDue > today) return "upcoming";
   if (nextDue === today) return "due_today";
   return "overdue";
+}
+
+/** Same normalisation as the database vaccine_key(): trim, collapse spaces, lowercase. */
+export const vaccineKey = (name: string) => name.trim().replace(/\s+/g, " ").toLowerCase();
+
+/**
+ * IDs of vaccination records superseded by a later record (later date, or same date created later) for the same
+ * livestock and the same normalised vaccine name. Differently named vaccines are never treated as interchangeable.
+ */
+export function supersededIds(rows: { id: string; livestock_id: string; vaccine_name: string; vaccination_date: string; created_at: string }[]) {
+  const latest = new Map<string, (typeof rows)[number]>();
+  for (const r of rows) {
+    const k = `${r.livestock_id}|${vaccineKey(r.vaccine_name)}`;
+    const cur = latest.get(k);
+    if (!cur || r.vaccination_date > cur.vaccination_date || (r.vaccination_date === cur.vaccination_date && r.created_at > cur.created_at)) latest.set(k, r);
+  }
+  const keep = new Set([...latest.values()].map((r) => r.id));
+  return new Set(rows.filter((r) => !keep.has(r.id)).map((r) => r.id));
 }
 
 export interface HealthEventForm {
@@ -163,7 +183,7 @@ export const healthService = {
   },
   async overview() {
     const { data, error } = await supabase.from("vaccination_records")
-      .select("id, livestock_id, vaccine_name, vaccination_date, next_due_date, livestock(id, name, identification_code, record_type, quantity, species, status)")
+      .select("id, livestock_id, vaccine_name, vaccination_date, next_due_date, created_at, livestock(id, name, identification_code, record_type, quantity, species, status)")
       .order("next_due_date", { ascending: true, nullsFirst: false }).order("vaccination_date", { ascending: false }).limit(500);
     if (error) fail(error);
     return data ?? [];

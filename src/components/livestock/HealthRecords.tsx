@@ -12,12 +12,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   EVENT_TYPES, HEALTH_LIMITS, HealthError, createEventSchema, createVaccinationSchema, dueStatus, emptyEvent, emptyVaccination,
-  eventToForm, healthKeys, healthService, vaccinationToForm, type HealthEvent, type HealthEventForm, type Vaccination, type VaccinationForm,
+  eventToForm, healthKeys, healthService, supersededIds, vaccinationToForm, type HealthEvent, type HealthEventForm, type Vaccination, type VaccinationForm,
 } from "@/lib/health";
 import { todayIso } from "@/lib/livestock";
 import type { TranslationKey } from "@/locales";
 
-type Notice = { ok: boolean; key: TranslationKey } | null;
+export type Notice = { ok: boolean; key: TranslationKey } | null;
 
 export function useDateFormat() {
   const { language } = useTranslation();
@@ -25,10 +25,10 @@ export function useDateFormat() {
 }
 
 export const DUE_BADGE: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-  upcoming: "secondary", due_today: "default", overdue: "destructive", no_due: "outline",
+  upcoming: "secondary", due_today: "default", overdue: "destructive", no_due: "outline", superseded: "outline",
 };
 
-function NoticeLine({ notice }: { notice: Notice }) {
+export function NoticeLine({ notice }: { notice: Notice }) {
   const { t } = useTranslation();
   if (!notice) return null;
   return (
@@ -38,7 +38,7 @@ function NoticeLine({ notice }: { notice: Notice }) {
   );
 }
 
-function LoadError({ onRetry }: { onRetry: () => void }) {
+export function LoadError({ onRetry }: { onRetry: () => void }) {
   const { t } = useTranslation();
   return (
     <div role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm">
@@ -49,7 +49,7 @@ function LoadError({ onRetry }: { onRetry: () => void }) {
 }
 
 /** Generic validated form: schema errors map to fields; server errors to a top alert. */
-function useRecordForm<T extends object>(initial: T, parse: (v: T) => { success: true } | { success: false; error: { issues: { path: PropertyKey[]; message: string }[] } }) {
+export function useRecordForm<T extends object>(initial: T, parse: (v: T) => { success: true } | { success: false; error: { issues: { path: PropertyKey[]; message: string }[] } }) {
   const { t } = useTranslation();
   const [v, setV] = useState<T>(initial);
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
@@ -81,7 +81,7 @@ function useRecordForm<T extends object>(initial: T, parse: (v: T) => { success:
   return { v, set, errors, formError, saving, submit };
 }
 
-function FormFrame({ title, formError, saving, onSubmit, onCancel, children }: {
+export function FormFrame({ title, formError, saving, onSubmit, onCancel, children }: {
   title: string; formError: string | null; saving: boolean; onSubmit: (e: FormEvent) => void; onCancel: () => void; children: ReactNode;
 }) {
   const { t } = useTranslation();
@@ -174,7 +174,7 @@ function VaccinationFormCard({ livestockId, record, onDone, onCancel }: { livest
   );
 }
 
-function Field({ label, value }: { label: string; value: string | null }) {
+export function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return <div className="min-w-0"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="mt-0.5 whitespace-pre-line break-words text-sm">{value}</dd></div>;
 }
@@ -248,6 +248,7 @@ export function VaccinationSection({ livestockId, canAdd }: { livestockId: strin
   const [editing, setEditing] = useState<Vaccination | "new" | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
   const today = todayIso();
+  const replaced = supersededIds(q.data ?? []);
 
   async function done(wasEdit: boolean) {
     setEditing(null);
@@ -277,7 +278,7 @@ export function VaccinationSection({ livestockId, canAdd }: { livestockId: strin
                     <div className="min-w-0">
                       <h4 className="break-words font-semibold">{v.vaccine_name}</h4>
                       <p className="text-xs text-muted-foreground">{t("vaccination.givenOn", { date: fmt(v.vaccination_date) })}</p>
-                      <Badge variant={DUE_BADGE[dueStatus(v.next_due_date, today)]} className="mt-1">{t(`vaccination.status.${dueStatus(v.next_due_date, today)}`)}</Badge>
+                      {(() => { const st = replaced.has(v.id) ? "superseded" as const : dueStatus(v.next_due_date, today); return <Badge variant={DUE_BADGE[st]} className="mt-1">{t(`vaccination.status.${st}`)}</Badge>; })()}
                     </div>
                     {canAdd && editing === null ? (
                       <Button variant="ghost" className="min-h-11" onClick={() => { setNotice(null); setEditing(v); }} aria-label={t("vaccination.editLabel", { name: v.vaccine_name })}>
