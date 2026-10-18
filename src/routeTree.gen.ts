@@ -22,6 +22,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedFarmerRouteRouteImport } from './routes/_authenticated/farmer/route'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedVetRouteImport } from './routes/_authenticated/vet'
+import { Route as VeterinariansIndexRouteImport } from './routes/veterinarians.index'
+import { Route as VeterinariansVetIdRouteImport } from './routes/veterinarians.$vetId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminVeterinariansRouteImport } from './routes/_authenticated/admin/veterinarians'
 import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin/waitlist'
@@ -97,6 +99,16 @@ const AuthenticatedVetRoute = AuthenticatedVetRouteImport.update({
   path: '/vet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const VeterinariansIndexRoute = VeterinariansIndexRouteImport.update({
+  id: '/veterinarians/',
+  path: '/veterinarians/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VeterinariansVetIdRoute = VeterinariansVetIdRouteImport.update({
+  id: '/veterinarians/$vetId',
+  path: '/veterinarians/$vetId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -164,6 +176,8 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/vet': typeof AuthenticatedVetRoute
+  '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
+  '/veterinarians/': typeof VeterinariansIndexRoute
   '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/farmer/vaccinations': typeof AuthenticatedFarmerVaccinationsRoute
@@ -185,6 +199,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/vet': typeof AuthenticatedVetRoute
+  '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
+  '/veterinarians': typeof VeterinariansIndexRoute
   '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/farmer/vaccinations': typeof AuthenticatedFarmerVaccinationsRoute
@@ -210,6 +226,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/vet': typeof AuthenticatedVetRoute
+  '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
+  '/veterinarians/': typeof VeterinariansIndexRoute
   '/_authenticated/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/_authenticated/farmer/vaccinations': typeof AuthenticatedFarmerVaccinationsRoute
@@ -235,6 +253,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/profile'
     | '/vet'
+    | '/veterinarians/$vetId'
+    | '/veterinarians/'
     | '/admin/veterinarians'
     | '/admin/waitlist'
     | '/farmer/vaccinations'
@@ -256,6 +276,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/profile'
     | '/vet'
+    | '/veterinarians/$vetId'
+    | '/veterinarians'
     | '/admin/veterinarians'
     | '/admin/waitlist'
     | '/farmer/vaccinations'
@@ -280,6 +302,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/profile'
     | '/_authenticated/vet'
+    | '/veterinarians/$vetId'
+    | '/veterinarians/'
     | '/_authenticated/admin/veterinarians'
     | '/_authenticated/admin/waitlist'
     | '/_authenticated/farmer/vaccinations'
@@ -299,6 +323,8 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   WaitlistRoute: typeof WaitlistRoute
+  VeterinariansVetIdRoute: typeof VeterinariansVetIdRoute
+  VeterinariansIndexRoute: typeof VeterinariansIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -393,6 +419,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/vet'
       preLoaderRoute: typeof AuthenticatedVetRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/veterinarians/': {
+      id: '/veterinarians/'
+      path: '/veterinarians'
+      fullPath: '/veterinarians/'
+      preLoaderRoute: typeof VeterinariansIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/veterinarians/$vetId': {
+      id: '/veterinarians/$vetId'
+      path: '/veterinarians/$vetId'
+      fullPath: '/veterinarians/$vetId'
+      preLoaderRoute: typeof VeterinariansVetIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -533,6 +573,8 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   WaitlistRoute: WaitlistRoute,
+  VeterinariansVetIdRoute: VeterinariansVetIdRoute,
+  VeterinariansIndexRoute: VeterinariansIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
