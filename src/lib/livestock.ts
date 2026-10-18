@@ -45,9 +45,14 @@ export const EMPTY_FORM: LivestockFormValues = {
   acquisitionDate: "", acquisitionSource: "", notes: "",
 };
 
-export function todayIso(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+/** Farm calendar time zone; must match public.farm_today() in the database. */
+export const FARM_TIME_ZONE = "Africa/Lagos";
+
+/** Today's farm calendar date (YYYY-MM-DD), identical to the database's farm_today() — no UTC shift. */
+export function todayIso(now: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: FARM_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now);
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
 }
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
