@@ -59,6 +59,78 @@ export type Database = {
           },
         ]
       }
+      care_ai_requests: {
+        Row: {
+          consent_at: string
+          created_at: string
+          farmer_id: string
+          id: string
+          language: string
+          livestock_id: string
+          response: string | null
+          status: string
+          symptoms: string
+        }
+        Insert: {
+          consent_at?: string
+          created_at?: string
+          farmer_id: string
+          id?: string
+          language: string
+          livestock_id: string
+          response?: string | null
+          status?: string
+          symptoms: string
+        }
+        Update: {
+          consent_at?: string
+          created_at?: string
+          farmer_id?: string
+          id?: string
+          language?: string
+          livestock_id?: string
+          response?: string | null
+          status?: string
+          symptoms?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_ai_requests_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_ai_requests_livestock_id_farmer_id_fkey"
+            columns: ["livestock_id", "farmer_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id", "owner_id"]
+          },
+        ]
+      }
+      care_ai_service_state: {
+        Row: {
+          id: string
+          paused: boolean
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          paused?: boolean
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          paused?: boolean
+          reason?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       care_appointments: {
         Row: {
           consultation_type: string
@@ -593,6 +665,35 @@ export type Database = {
           },
         ]
       }
+      care_video_rooms: {
+        Row: {
+          appointment_id: string
+          expires_at: string
+          room_name: string
+          room_url: string
+        }
+        Insert: {
+          appointment_id: string
+          expires_at: string
+          room_name: string
+          room_url: string
+        }
+        Update: {
+          appointment_id?: string
+          expires_at?: string
+          room_name?: string
+          room_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_video_rooms_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: true
+            referencedRelation: "care_appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_events: {
         Row: {
           created_at: string
@@ -1091,6 +1192,22 @@ export type Database = {
         Returns: string
       }
       care_not_blocked: { Args: { _a: string; _b: string }; Returns: boolean }
+      care_publish_prescription: {
+        Args: {
+          _appointment: string
+          _confirmed: boolean
+          _consultation: string
+          _dose: string
+          _duration: string
+          _frequency: string
+          _instructions: string
+          _medicine: string
+          _route: string
+          _supersedes?: string
+          _withdrawal: string
+        }
+        Returns: string
+      }
       care_read_messages: { Args: { _appointment: string }; Returns: undefined }
       care_record_administration: {
         Args: {
@@ -1101,6 +1218,12 @@ export type Database = {
         }
         Returns: string
       }
+      care_required_confirmation: {
+        Args: { _confirmed: boolean }
+        Returns: boolean
+      }
+      care_reschedule: { Args: { _id: string; _slot: string }; Returns: string }
+      care_review_report: { Args: { _id: string }; Returns: undefined }
       care_save_consultation: {
         Args: {
           _appointment: string

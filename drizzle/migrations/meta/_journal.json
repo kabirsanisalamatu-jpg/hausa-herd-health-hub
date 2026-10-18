@@ -78,6 +78,13 @@
       "when": 1792354404730,
       "tag": "0010_care_messages_consultations_prescriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792354453454,
+      "tag": "0011_care_ai_video_security_and_reschedule",
+      "breakpoints": true
     }
   ]
 }
