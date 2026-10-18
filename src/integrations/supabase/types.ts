@@ -180,6 +180,80 @@ export type Database = {
         }
         Relationships: []
       }
+      treatment_records: {
+        Row: {
+          administered_by: string | null
+          administration_date: string | null
+          assessment_date: string | null
+          created_at: string
+          dose_and_instructions: string | null
+          farmer_observations: string | null
+          follow_up_date: string | null
+          id: string
+          livestock_id: string
+          medicine_name: string | null
+          notes: string | null
+          owner_id: string
+          record_date: string
+          reported_problem: string
+          treatment_plan: string | null
+          treatment_status: string
+          updated_at: string
+          veterinarian_name: string | null
+          veterinary_assessment: string | null
+        }
+        Insert: {
+          administered_by?: string | null
+          administration_date?: string | null
+          assessment_date?: string | null
+          created_at?: string
+          dose_and_instructions?: string | null
+          farmer_observations?: string | null
+          follow_up_date?: string | null
+          id?: string
+          livestock_id: string
+          medicine_name?: string | null
+          notes?: string | null
+          owner_id?: string
+          record_date: string
+          reported_problem: string
+          treatment_plan?: string | null
+          treatment_status?: string
+          updated_at?: string
+          veterinarian_name?: string | null
+          veterinary_assessment?: string | null
+        }
+        Update: {
+          administered_by?: string | null
+          administration_date?: string | null
+          assessment_date?: string | null
+          created_at?: string
+          dose_and_instructions?: string | null
+          farmer_observations?: string | null
+          follow_up_date?: string | null
+          id?: string
+          livestock_id?: string
+          medicine_name?: string | null
+          notes?: string | null
+          owner_id?: string
+          record_date?: string
+          reported_problem?: string
+          treatment_plan?: string | null
+          treatment_status?: string
+          updated_at?: string
+          veterinarian_name?: string | null
+          veterinary_assessment?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "treatment_livestock_owner_fk"
+            columns: ["livestock_id", "owner_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id", "owner_id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -346,6 +420,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      farmer_reminders: {
+        Args: { _horizon?: number; _today: string }
+        Returns: {
+          due_date: string
+          identification_code: string
+          kind: string
+          label: string
+          livestock_id: string
+          livestock_name: string
+          quantity: number
+          record_id: string
+          record_type: string
+          species: string
+          treatment_status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -382,6 +472,8 @@ export type Database = {
         }
         Returns: undefined
       }
+      treatment_count: { Args: never; Returns: number }
+      vaccine_key: { Args: { _name: string }; Returns: string }
     }
     Enums: {
       app_role: "farmer" | "vet" | "admin" | "content_editor" | "super_admin"

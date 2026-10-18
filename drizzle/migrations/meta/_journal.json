@@ -43,6 +43,13 @@
       "when": 1792350114912,
       "tag": "0005_0005_health_vaccinations",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792351312093,
+      "tag": "0006_0006_treatments_reminders",
+      "breakpoints": true
     }
   ]
 }
