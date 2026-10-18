@@ -26,6 +26,8 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminVeterinariansRouteImport } from './routes/_authenticated/admin/veterinarians'
 import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin/waitlist'
 import { Route as AuthenticatedFarmerIndexRouteImport } from './routes/_authenticated/farmer/index'
+import { Route as AuthenticatedFarmerLivestockIndexRouteImport } from './routes/_authenticated/farmer/livestock/index'
+import { Route as AuthenticatedFarmerLivestockIdRouteImport } from './routes/_authenticated/farmer/livestock/$id'
 import { Route as AuthenticatedFarmerLivestockNewRouteImport } from './routes/_authenticated/farmer/livestock/new'
 import { Route as AuthenticatedFarmerLivestockIdEditRouteImport } from './routes/_authenticated/farmer/livestock/$id_.edit'
 
@@ -117,6 +119,18 @@ const AuthenticatedFarmerIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedFarmerRouteRoute,
   } as any)
+const AuthenticatedFarmerLivestockIndexRoute =
+  AuthenticatedFarmerLivestockIndexRouteImport.update({
+    id: '/livestock/',
+    path: '/livestock/',
+    getParentRoute: () => AuthenticatedFarmerRouteRoute,
+  } as any)
+const AuthenticatedFarmerLivestockIdRoute =
+  AuthenticatedFarmerLivestockIdRouteImport.update({
+    id: '/livestock/$id',
+    path: '/livestock/$id',
+    getParentRoute: () => AuthenticatedFarmerRouteRoute,
+  } as any)
 const AuthenticatedFarmerLivestockNewRoute =
   AuthenticatedFarmerLivestockNewRouteImport.update({
     id: '/livestock/new',
@@ -147,7 +161,9 @@ export interface FileRoutesByFullPath {
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/farmer/': typeof AuthenticatedFarmerIndexRoute
+  '/farmer/livestock/$id': typeof AuthenticatedFarmerLivestockIdRoute
   '/farmer/livestock/new': typeof AuthenticatedFarmerLivestockNewRoute
+  '/farmer/livestock/': typeof AuthenticatedFarmerLivestockIndexRoute
   '/farmer/livestock/$id/edit': typeof AuthenticatedFarmerLivestockIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -165,7 +181,9 @@ export interface FileRoutesByTo {
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/farmer': typeof AuthenticatedFarmerIndexRoute
+  '/farmer/livestock/$id': typeof AuthenticatedFarmerLivestockIdRoute
   '/farmer/livestock/new': typeof AuthenticatedFarmerLivestockNewRoute
+  '/farmer/livestock': typeof AuthenticatedFarmerLivestockIndexRoute
   '/farmer/livestock/$id/edit': typeof AuthenticatedFarmerLivestockIdEditRoute
 }
 export interface FileRoutesById {
@@ -187,7 +205,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/farmer/': typeof AuthenticatedFarmerIndexRoute
+  '/_authenticated/farmer/livestock/$id': typeof AuthenticatedFarmerLivestockIdRoute
   '/_authenticated/farmer/livestock/new': typeof AuthenticatedFarmerLivestockNewRoute
+  '/_authenticated/farmer/livestock/': typeof AuthenticatedFarmerLivestockIndexRoute
   '/_authenticated/farmer/livestock/$id_/edit': typeof AuthenticatedFarmerLivestockIdEditRoute
 }
 export interface FileRouteTypes {
@@ -209,7 +229,9 @@ export interface FileRouteTypes {
     | '/admin/waitlist'
     | '/admin/'
     | '/farmer/'
+    | '/farmer/livestock/$id'
     | '/farmer/livestock/new'
+    | '/farmer/livestock/'
     | '/farmer/livestock/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -227,7 +249,9 @@ export interface FileRouteTypes {
     | '/admin/waitlist'
     | '/admin'
     | '/farmer'
+    | '/farmer/livestock/$id'
     | '/farmer/livestock/new'
+    | '/farmer/livestock'
     | '/farmer/livestock/$id/edit'
   id:
     | '__root__'
@@ -248,7 +272,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/waitlist'
     | '/_authenticated/admin/'
     | '/_authenticated/farmer/'
+    | '/_authenticated/farmer/livestock/$id'
     | '/_authenticated/farmer/livestock/new'
+    | '/_authenticated/farmer/livestock/'
     | '/_authenticated/farmer/livestock/$id_/edit'
   fileRoutesById: FileRoutesById
 }
@@ -383,6 +409,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFarmerIndexRouteImport
       parentRoute: typeof AuthenticatedFarmerRouteRoute
     }
+    '/_authenticated/farmer/livestock/': {
+      id: '/_authenticated/farmer/livestock/'
+      path: '/livestock'
+      fullPath: '/farmer/livestock/'
+      preLoaderRoute: typeof AuthenticatedFarmerLivestockIndexRouteImport
+      parentRoute: typeof AuthenticatedFarmerRouteRoute
+    }
+    '/_authenticated/farmer/livestock/$id': {
+      id: '/_authenticated/farmer/livestock/$id'
+      path: '/livestock/$id'
+      fullPath: '/farmer/livestock/$id'
+      preLoaderRoute: typeof AuthenticatedFarmerLivestockIdRouteImport
+      parentRoute: typeof AuthenticatedFarmerRouteRoute
+    }
     '/_authenticated/farmer/livestock/new': {
       id: '/_authenticated/farmer/livestock/new'
       path: '/livestock/new'
@@ -420,14 +460,19 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedFarmerRouteRouteChildren {
   AuthenticatedFarmerIndexRoute: typeof AuthenticatedFarmerIndexRoute
+  AuthenticatedFarmerLivestockIdRoute: typeof AuthenticatedFarmerLivestockIdRoute
   AuthenticatedFarmerLivestockNewRoute: typeof AuthenticatedFarmerLivestockNewRoute
+  AuthenticatedFarmerLivestockIndexRoute: typeof AuthenticatedFarmerLivestockIndexRoute
   AuthenticatedFarmerLivestockIdEditRoute: typeof AuthenticatedFarmerLivestockIdEditRoute
 }
 
 const AuthenticatedFarmerRouteRouteChildren: AuthenticatedFarmerRouteRouteChildren =
   {
     AuthenticatedFarmerIndexRoute: AuthenticatedFarmerIndexRoute,
+    AuthenticatedFarmerLivestockIdRoute: AuthenticatedFarmerLivestockIdRoute,
     AuthenticatedFarmerLivestockNewRoute: AuthenticatedFarmerLivestockNewRoute,
+    AuthenticatedFarmerLivestockIndexRoute:
+      AuthenticatedFarmerLivestockIndexRoute,
     AuthenticatedFarmerLivestockIdEditRoute:
       AuthenticatedFarmerLivestockIdEditRoute,
   }

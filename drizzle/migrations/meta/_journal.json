@@ -29,6 +29,13 @@
       "when": 1792348984174,
       "tag": "0003_0003_livestock",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792349238983,
+      "tag": "0004_0004_livestock_type_immutable",
+      "breakpoints": true
     }
   ]
 }
