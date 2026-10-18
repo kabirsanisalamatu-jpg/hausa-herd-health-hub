@@ -20,8 +20,10 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedContentRouteImport } from './routes/_authenticated/content'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFarmerRouteImport } from './routes/_authenticated/farmer'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedVetRouteImport } from './routes/_authenticated/vet'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminVeterinariansRouteImport } from './routes/_authenticated/admin/veterinarians'
 import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin/waitlist'
 
 const IndexRoute = IndexRouteImport.update({
@@ -78,6 +80,11 @@ const AuthenticatedFarmerRoute = AuthenticatedFarmerRouteImport.update({
   path: '/farmer',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedVetRoute = AuthenticatedVetRouteImport.update({
   id: '/vet',
   path: '/vet',
@@ -88,6 +95,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminVeterinariansRoute =
+  AuthenticatedAdminVeterinariansRouteImport.update({
+    id: '/veterinarians',
+    path: '/veterinarians',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminWaitlistRoute =
   AuthenticatedAdminWaitlistRouteImport.update({
     id: '/waitlist',
@@ -106,7 +119,9 @@ export interface FileRoutesByFullPath {
   '/content': typeof AuthenticatedContentRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/farmer': typeof AuthenticatedFarmerRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/vet': typeof AuthenticatedVetRoute
+  '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -120,7 +135,9 @@ export interface FileRoutesByTo {
   '/content': typeof AuthenticatedContentRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/farmer': typeof AuthenticatedFarmerRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/vet': typeof AuthenticatedVetRoute
+  '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -137,7 +154,9 @@ export interface FileRoutesById {
   '/_authenticated/content': typeof AuthenticatedContentRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/farmer': typeof AuthenticatedFarmerRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/vet': typeof AuthenticatedVetRoute
+  '/_authenticated/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -154,7 +173,9 @@ export interface FileRouteTypes {
     | '/content'
     | '/dashboard'
     | '/farmer'
+    | '/profile'
     | '/vet'
+    | '/admin/veterinarians'
     | '/admin/waitlist'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -168,7 +189,9 @@ export interface FileRouteTypes {
     | '/content'
     | '/dashboard'
     | '/farmer'
+    | '/profile'
     | '/vet'
+    | '/admin/veterinarians'
     | '/admin/waitlist'
     | '/admin'
   id:
@@ -184,7 +207,9 @@ export interface FileRouteTypes {
     | '/_authenticated/content'
     | '/_authenticated/dashboard'
     | '/_authenticated/farmer'
+    | '/_authenticated/profile'
     | '/_authenticated/vet'
+    | '/_authenticated/admin/veterinarians'
     | '/_authenticated/admin/waitlist'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -278,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFarmerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vet': {
       id: '/_authenticated/vet'
       path: '/vet'
@@ -292,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/veterinarians': {
+      id: '/_authenticated/admin/veterinarians'
+      path: '/veterinarians'
+      fullPath: '/admin/veterinarians'
+      preLoaderRoute: typeof AuthenticatedAdminVeterinariansRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/waitlist': {
       id: '/_authenticated/admin/waitlist'
       path: '/waitlist'
@@ -303,12 +342,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminVeterinariansRoute: typeof AuthenticatedAdminVeterinariansRoute
   AuthenticatedAdminWaitlistRoute: typeof AuthenticatedAdminWaitlistRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminVeterinariansRoute: AuthenticatedAdminVeterinariansRoute,
     AuthenticatedAdminWaitlistRoute: AuthenticatedAdminWaitlistRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
@@ -323,6 +364,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedContentRoute: typeof AuthenticatedContentRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFarmerRoute: typeof AuthenticatedFarmerRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedVetRoute: typeof AuthenticatedVetRoute
 }
 
@@ -331,6 +373,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedContentRoute: AuthenticatedContentRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFarmerRoute: AuthenticatedFarmerRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedVetRoute: AuthenticatedVetRoute,
 }
 
