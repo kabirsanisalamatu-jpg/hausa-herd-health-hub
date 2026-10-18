@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      livestock: {
+        Row: {
+          acquisition_date: string | null
+          acquisition_source: string | null
+          archived_at: string | null
+          breed: string | null
+          created_at: string
+          date_of_birth: string | null
+          estimated_age_unit: string | null
+          estimated_age_value: number | null
+          id: string
+          identification_code: string | null
+          name: string | null
+          notes: string | null
+          owner_id: string
+          purpose: string | null
+          quantity: number
+          record_type: string
+          sex: string | null
+          species: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          acquisition_date?: string | null
+          acquisition_source?: string | null
+          archived_at?: string | null
+          breed?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          estimated_age_unit?: string | null
+          estimated_age_value?: number | null
+          id?: string
+          identification_code?: string | null
+          name?: string | null
+          notes?: string | null
+          owner_id?: string
+          purpose?: string | null
+          quantity?: number
+          record_type: string
+          sex?: string | null
+          species: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          acquisition_date?: string | null
+          acquisition_source?: string | null
+          archived_at?: string | null
+          breed?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          estimated_age_unit?: string | null
+          estimated_age_value?: number | null
+          id?: string
+          identification_code?: string | null
+          name?: string | null
+          notes?: string | null
+          owner_id?: string
+          purpose?: string | null
+          quantity?: number
+          record_type?: string
+          sex?: string | null
+          species?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livestock_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -172,6 +249,17 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      livestock_summary: {
+        Args: never
+        Returns: {
+          active_records: number
+          animals_in_groups: number
+          archived_records: number
+          group_records: number
+          individual_records: number
+          total_animals: number
+        }[]
       }
       review_vet: {
         Args: {
