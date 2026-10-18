@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      health_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_date: string
+          event_type: string
+          follow_up_date: string | null
+          id: string
+          livestock_id: string
+          owner_id: string
+          professional_involved: string | null
+          reported_by: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_date: string
+          event_type: string
+          follow_up_date?: string | null
+          id?: string
+          livestock_id: string
+          owner_id?: string
+          professional_involved?: string | null
+          reported_by?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          event_type?: string
+          follow_up_date?: string | null
+          id?: string
+          livestock_id?: string
+          owner_id?: string
+          professional_involved?: string | null
+          reported_by?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_events_livestock_owner_fk"
+            columns: ["livestock_id", "owner_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id", "owner_id"]
+          },
+        ]
+      }
       livestock: {
         Row: {
           acquisition_date: string | null
@@ -148,6 +201,56 @@ export type Database = {
         }
         Relationships: []
       }
+      vaccination_records: {
+        Row: {
+          administered_by_name: string | null
+          batch_number: string | null
+          created_at: string
+          id: string
+          livestock_id: string
+          next_due_date: string | null
+          notes: string | null
+          owner_id: string
+          updated_at: string
+          vaccination_date: string
+          vaccine_name: string
+        }
+        Insert: {
+          administered_by_name?: string | null
+          batch_number?: string | null
+          created_at?: string
+          id?: string
+          livestock_id: string
+          next_due_date?: string | null
+          notes?: string | null
+          owner_id?: string
+          updated_at?: string
+          vaccination_date: string
+          vaccine_name: string
+        }
+        Update: {
+          administered_by_name?: string | null
+          batch_number?: string | null
+          created_at?: string
+          id?: string
+          livestock_id?: string
+          next_due_date?: string | null
+          notes?: string | null
+          owner_id?: string
+          updated_at?: string
+          vaccination_date?: string
+          vaccine_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccination_livestock_owner_fk"
+            columns: ["livestock_id", "owner_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id", "owner_id"]
+          },
+        ]
+      }
       vet_verifications: {
         Row: {
           created_at: string
@@ -249,6 +352,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      health_summary: {
+        Args: { _today: string }
+        Returns: {
+          due_today: number
+          health_events: number
+          overdue: number
+          upcoming: number
+          vaccination_records: number
+        }[]
       }
       livestock_summary: {
         Args: never
