@@ -16,11 +16,13 @@ const ROLE_NAV: Record<AppRole, { to: string; labelKey: TranslationKey }[]> = {
     { to: "/farmer", labelKey: "nav.myWorkspace" },
     { to: "/farmer/livestock", labelKey: "nav.livestock" },
     { to: "/farmer/vaccinations", labelKey: "nav.vaccinations" },
+    { to: "/farmer/care", labelKey: "care.title" },
     { to: "/profile", labelKey: "nav.profile" },
   ],
   vet: [
     { to: "/dashboard", labelKey: "nav.dashboard" },
     { to: "/vet", labelKey: "nav.vetWorkspace" },
+    { to: "/vet/care", labelKey: "care.title" },
     { to: "/profile", labelKey: "nav.profile" },
   ],
   admin: [
@@ -85,6 +87,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           </Link>
 
           <nav className="hidden items-center gap-1 lg:flex" aria-label={t("nav.menu")}>
+            <Link to="/veterinarians" className="px-3 py-3 text-sm font-medium">{t("care.directory")}</Link>
             <a href="/#features" className="rounded-md px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.features")}</a>
             <a href="/#how-it-works" className="rounded-md px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.howItWorks")}</a>
             <a href="/#about" className="rounded-md px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.about")}</a>

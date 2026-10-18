@@ -30,6 +30,7 @@ function FarmerLayout() {
           { to: "/farmer", labelKey: "nav.myWorkspace" },
           { to: "/farmer/livestock", labelKey: "nav.livestock" },
           { to: "/farmer/vaccinations", labelKey: "nav.vaccinations" },
+          { to: "/farmer/care", labelKey: "care.title" },
           { to: "/profile", labelKey: "nav.profile" },
         ]}
       >
