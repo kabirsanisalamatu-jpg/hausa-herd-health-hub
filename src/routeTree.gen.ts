@@ -25,6 +25,7 @@ import { Route as AuthenticatedVetRouteImport } from './routes/_authenticated/ve
 import { Route as VeterinariansIndexRouteImport } from './routes/veterinarians.index'
 import { Route as VeterinariansVetIdRouteImport } from './routes/veterinarians.$vetId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
 import { Route as AuthenticatedAdminVeterinariansRouteImport } from './routes/_authenticated/admin/veterinarians'
 import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin/waitlist'
 import { Route as AuthenticatedFarmerIndexRouteImport } from './routes/_authenticated/farmer/index'
@@ -116,6 +117,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminVeterinariansRoute =
   AuthenticatedAdminVeterinariansRouteImport.update({
     id: '/veterinarians',
@@ -190,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/vet': typeof AuthenticatedVetRoute
   '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
   '/veterinarians/': typeof VeterinariansIndexRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/farmer/care': typeof AuthenticatedFarmerCareRoute
@@ -215,6 +223,7 @@ export interface FileRoutesByTo {
   '/vet': typeof AuthenticatedVetRoute
   '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
   '/veterinarians': typeof VeterinariansIndexRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/farmer/care': typeof AuthenticatedFarmerCareRoute
@@ -244,6 +253,7 @@ export interface FileRoutesById {
   '/_authenticated/vet': typeof AuthenticatedVetRoute
   '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
   '/veterinarians/': typeof VeterinariansIndexRoute
+  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/_authenticated/farmer/care': typeof AuthenticatedFarmerCareRoute
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/vet'
     | '/veterinarians/$vetId'
     | '/veterinarians/'
+    | '/admin/reports'
     | '/admin/veterinarians'
     | '/admin/waitlist'
     | '/farmer/care'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/vet'
     | '/veterinarians/$vetId'
     | '/veterinarians'
+    | '/admin/reports'
     | '/admin/veterinarians'
     | '/admin/waitlist'
     | '/farmer/care'
@@ -326,6 +338,7 @@ export interface FileRouteTypes {
     | '/_authenticated/vet'
     | '/veterinarians/$vetId'
     | '/veterinarians/'
+    | '/_authenticated/admin/reports'
     | '/_authenticated/admin/veterinarians'
     | '/_authenticated/admin/waitlist'
     | '/_authenticated/farmer/care'
@@ -465,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/veterinarians': {
       id: '/_authenticated/admin/veterinarians'
       path: '/veterinarians'
@@ -539,6 +559,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminVeterinariansRoute: typeof AuthenticatedAdminVeterinariansRoute
   AuthenticatedAdminWaitlistRoute: typeof AuthenticatedAdminWaitlistRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -546,6 +567,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
     AuthenticatedAdminVeterinariansRoute: AuthenticatedAdminVeterinariansRoute,
     AuthenticatedAdminWaitlistRoute: AuthenticatedAdminWaitlistRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
