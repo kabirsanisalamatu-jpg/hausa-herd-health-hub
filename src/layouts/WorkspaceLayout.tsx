@@ -43,10 +43,10 @@ export function WorkspaceLayout({
         <div>
           <h1 className="text-2xl font-semibold leading-tight sm:text-3xl">{t(titleKey)}</h1>
           <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{t(descriptionKey)}</p>
-          <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <span className="font-medium text-foreground">{profile?.full_name}</span>
             <Badge variant="secondary">{t(ROLE_LABEL_KEYS[role])}</Badge>
-          </p>
+          </div>
         </div>
         <Button variant="outline" className="min-h-11" onClick={handleSignOut}>
           <LogOut aria-hidden="true" />
