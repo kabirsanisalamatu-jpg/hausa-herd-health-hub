@@ -355,6 +355,15 @@ export const ha: Dictionary = {
   "adminVets.status.approved": "An amince",
   "adminVets.status.rejected": "An ƙi",
 
+  "content.feature.hausaEducation": "Ilimin lafiya a Hausa",
+  "content.feature.hausaEducationDesc": "Rubuta kuma gudanar da ilimin lafiyar dabbobi a Hausa.",
+  "content.feature.vetGuidance": "Shawarwarin likitocin dabbobi",
+  "content.feature.vetGuidanceDesc": "Kula da shawarwarin da aka duba tare da ƙwararrun likitocin dabbobi.",
+  "content.feature.farmerEducation": "Ilimin manoma",
+  "content.feature.farmerEducationDesc": "Kayan koyo masu amfani ga masu kiwo.",
+  "content.feature.announcements": "Sanarwa",
+  "content.feature.announcementsDesc": "Raba sabbin labarai ga masu amfani da AgriVet OS.",
+
   "profile.title": "Bayananka",
   "profile.description": "Sabunta sunanka, wayarka, wurin da kake da harshenka. Ba a iya canza imel ko matsayinka a nan.",
   "profile.emailNote": "Adireshin imel (ba a iya canjawa)",

@@ -16,7 +16,10 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as WaitlistRouteImport } from './routes/waitlist'
+import { Route as AuthenticatedContentRouteImport } from './routes/_authenticated/content'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedFarmerRouteImport } from './routes/_authenticated/farmer'
+import { Route as AuthenticatedVetRouteImport } from './routes/_authenticated/vet'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,9 +55,24 @@ const WaitlistRoute = WaitlistRouteImport.update({
   path: '/waitlist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedContentRoute = AuthenticatedContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFarmerRoute = AuthenticatedFarmerRouteImport.update({
+  id: '/farmer',
+  path: '/farmer',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedVetRoute = AuthenticatedVetRouteImport.update({
+  id: '/vet',
+  path: '/vet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
@@ -65,7 +83,10 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/waitlist': typeof WaitlistRoute
+  '/content': typeof AuthenticatedContentRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/farmer': typeof AuthenticatedFarmerRoute
+  '/vet': typeof AuthenticatedVetRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -74,7 +95,10 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/waitlist': typeof WaitlistRoute
+  '/content': typeof AuthenticatedContentRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/farmer': typeof AuthenticatedFarmerRoute
+  '/vet': typeof AuthenticatedVetRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,7 +109,10 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/waitlist': typeof WaitlistRoute
+  '/_authenticated/content': typeof AuthenticatedContentRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/farmer': typeof AuthenticatedFarmerRoute
+  '/_authenticated/vet': typeof AuthenticatedVetRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,7 +123,10 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/waitlist'
+    | '/content'
     | '/dashboard'
+    | '/farmer'
+    | '/vet'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -105,7 +135,10 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/waitlist'
+    | '/content'
     | '/dashboard'
+    | '/farmer'
+    | '/vet'
   id:
     | '__root__'
     | '/'
@@ -115,7 +148,10 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/waitlist'
+    | '/_authenticated/content'
     | '/_authenticated/dashboard'
+    | '/_authenticated/farmer'
+    | '/_authenticated/vet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -179,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WaitlistRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/content': {
+      id: '/_authenticated/content'
+      path: '/content'
+      fullPath: '/content'
+      preLoaderRoute: typeof AuthenticatedContentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -186,15 +229,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/farmer': {
+      id: '/_authenticated/farmer'
+      path: '/farmer'
+      fullPath: '/farmer'
+      preLoaderRoute: typeof AuthenticatedFarmerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vet': {
+      id: '/_authenticated/vet'
+      path: '/vet'
+      fullPath: '/vet'
+      preLoaderRoute: typeof AuthenticatedVetRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedContentRoute: typeof AuthenticatedContentRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedFarmerRoute: typeof AuthenticatedFarmerRoute
+  AuthenticatedVetRoute: typeof AuthenticatedVetRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedContentRoute: AuthenticatedContentRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedFarmerRoute: AuthenticatedFarmerRoute,
+  AuthenticatedVetRoute: AuthenticatedVetRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

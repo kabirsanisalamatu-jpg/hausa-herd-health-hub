@@ -362,6 +362,15 @@ export const en = {
   "adminVets.status.approved": "Approved",
   "adminVets.status.rejected": "Rejected",
 
+  "content.feature.hausaEducation": "Hausa health education",
+  "content.feature.hausaEducationDesc": "Write and manage livestock-health education in Hausa.",
+  "content.feature.vetGuidance": "Veterinary guidance",
+  "content.feature.vetGuidanceDesc": "Maintain guidance reviewed with veterinary professionals.",
+  "content.feature.farmerEducation": "Farmer education",
+  "content.feature.farmerEducationDesc": "Practical learning material for livestock farmers.",
+  "content.feature.announcements": "Announcements",
+  "content.feature.announcementsDesc": "Share updates with AgriVet OS users.",
+
   "profile.title": "Your profile",
   "profile.description": "Update your name, phone, location and language. Your email and role cannot be changed here.",
   "profile.emailNote": "Email address (cannot be changed)",
