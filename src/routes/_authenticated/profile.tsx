@@ -67,7 +67,8 @@ function ProfilePage() {
         full_name: fullName.trim(),
         phone: phone.trim() || null,
         location: location.trim() || null,
-        preferred_language: language,
+        // Never send an empty value — fall back to the stored language.
+        preferred_language: language === "en" || language === "ha" ? language : (profile.preferred_language === "en" ? "en" : "ha"),
       })
       .eq("id", profile.id);
     setSaving(false);
@@ -102,7 +103,7 @@ function ProfilePage() {
 
         <div className="grid gap-2">
           <Label htmlFor="profile-language">{t("auth.language")}</Label>
-          <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
+          <Select value={language} onValueChange={(v) => { if (v === "en" || v === "ha") setLanguage(v); }}>
             <SelectTrigger id="profile-language" className="min-h-11">
               <SelectValue />
             </SelectTrigger>
