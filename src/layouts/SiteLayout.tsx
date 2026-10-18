@@ -131,14 +131,24 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               <a href="/demo" title={t("nav.comingSoon")} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.demo")}</a>
               <div className="my-2 border-t border-border" />
               {user ? (
-                <Link to="/dashboard" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md border border-input text-sm font-medium">{t("nav.dashboard")}</Link>
+                <>
+                  {roleNav.map((item) => (
+                    <Link key={item.to} to={item.to} onClick={closeMenu} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t(item.labelKey)}</Link>
+                  ))}
+                  <Button variant="outline" className="mt-2 min-h-11" onClick={handleSignOut}>
+                    <LogOut aria-hidden="true" />
+                    {t("auth.signOut")}
+                  </Button>
+                </>
               ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Link to="/sign-in" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md border border-input text-sm font-medium">{t("nav.signIn")}</Link>
-                  <Link to="/sign-up" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md bg-secondary text-sm font-medium text-secondary-foreground">{t("nav.signUp")}</Link>
-                </div>
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link to="/sign-in" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md border border-input text-sm font-medium">{t("nav.signIn")}</Link>
+                    <Link to="/sign-up" onClick={closeMenu} className="inline-flex min-h-11 items-center justify-center rounded-md bg-secondary text-sm font-medium text-secondary-foreground">{t("nav.signUp")}</Link>
+                  </div>
+                  <Button asChild className="mt-2 min-h-11"><Link to="/waitlist" onClick={closeMenu}>{t("nav.joinWaitlist")}</Link></Button>
+                </>
               )}
-              <Button asChild className="mt-2 min-h-11"><Link to="/waitlist" onClick={closeMenu}>{t("nav.joinWaitlist")}</Link></Button>
               <LanguageSwitcher className="mt-3 w-fit" />
             </div>
           </nav>
