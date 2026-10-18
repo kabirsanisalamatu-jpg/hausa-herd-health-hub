@@ -1,11 +1,47 @@
 import { useState, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { LogOut, Menu, X } from "lucide-react";
 import { Brand } from "@/components/common/Brand";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAuth } from "@/contexts/AuthContext";
+import type { AppRole } from "@/lib/auth";
+import type { TranslationKey } from "@/locales";
+
+/** Role-based navigation for signed-in users. Route protection + RLS stay the real boundary. */
+const ROLE_NAV: Record<AppRole, { to: string; labelKey: TranslationKey }[]> = {
+  farmer: [
+    { to: "/dashboard", labelKey: "nav.dashboard" },
+    { to: "/farmer", labelKey: "nav.myWorkspace" },
+    { to: "/profile", labelKey: "nav.profile" },
+  ],
+  vet: [
+    { to: "/dashboard", labelKey: "nav.dashboard" },
+    { to: "/vet", labelKey: "nav.vetWorkspace" },
+    { to: "/profile", labelKey: "nav.profile" },
+  ],
+  admin: [
+    { to: "/dashboard", labelKey: "nav.dashboard" },
+    { to: "/admin", labelKey: "nav.admin" },
+    { to: "/admin/waitlist", labelKey: "nav.waitlistReview" },
+    { to: "/admin/veterinarians", labelKey: "nav.veterinarians" },
+    { to: "/profile", labelKey: "nav.profile" },
+  ],
+  content_editor: [
+    { to: "/dashboard", labelKey: "nav.dashboard" },
+    { to: "/content", labelKey: "nav.content" },
+    { to: "/profile", labelKey: "nav.profile" },
+  ],
+  super_admin: [
+    { to: "/dashboard", labelKey: "nav.dashboard" },
+    { to: "/admin", labelKey: "nav.admin" },
+    { to: "/admin/waitlist", labelKey: "nav.waitlistReview" },
+    { to: "/admin/veterinarians", labelKey: "nav.veterinarians" },
+    { to: "/content", labelKey: "nav.content" },
+    { to: "/profile", labelKey: "nav.profile" },
+  ],
+};
 
 /**
  * Shared public shell: header with brand + language switcher, main region, footer.
@@ -13,11 +49,19 @@ import { useAuth } from "@/contexts/AuthContext";
  */
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, role, signOut } = useAuth();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
   const year = new Date().getFullYear();
+  const roleNav = user && role ? ROLE_NAV[role] : [];
+
+  async function handleSignOut() {
+    closeMenu();
+    await signOut();
+    void navigate({ to: "/", replace: true });
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -48,14 +92,22 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           <div className="hidden items-center gap-2 lg:flex">
             <LanguageSwitcher />
             {user ? (
-              <Link to="/dashboard" className="inline-flex min-h-11 items-center rounded-md border border-input px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.dashboard")}</Link>
+              <>
+                {roleNav.map((item) => (
+                  <Link key={item.to} to={item.to} className="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t(item.labelKey)}</Link>
+                ))}
+                <Button variant="outline" className="min-h-11" onClick={handleSignOut}>
+                  <LogOut aria-hidden="true" />
+                  {t("auth.signOut")}
+                </Button>
+              </>
             ) : (
               <>
                 <Link to="/sign-in" className="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground">{t("nav.signIn")}</Link>
                 <Link to="/sign-up" className="inline-flex min-h-11 items-center rounded-md border border-input px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.signUp")}</Link>
+                <Button asChild><Link to="/waitlist">{t("nav.joinWaitlist")}</Link></Button>
               </>
             )}
-            <Button asChild><Link to="/waitlist">{t("nav.joinWaitlist")}</Link></Button>
           </div>
 
           <Button
