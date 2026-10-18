@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BadgeCheck, Clock, XCircle } from "lucide-react";
-import { ComingSoonGrid } from "@/components/common/ComingSoonGrid";
+import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/common/LoadingState";
 import { RoleGate } from "@/components/common/RoleGate";
 import { WorkspaceLayout } from "@/layouts/WorkspaceLayout";
@@ -39,29 +39,20 @@ function VetPage() {
         role="vet"
         navItems={[
           { to: "/vet", labelKey: "nav.vetWorkspace" },
+          { to: "/vet/care", labelKey: "care.title" },
           { to: "/profile", labelKey: "nav.profile" },
         ]}
       >
         <VerificationStatusCard />
         <div className="mt-8">
-          <ComingSoonGrid
-            items={[
-              { titleKey: "vet.feature.cases", descriptionKey: "vet.feature.casesDesc" },
-              { titleKey: "vet.feature.requests", descriptionKey: "vet.feature.requestsDesc" },
-              { titleKey: "vet.feature.records", descriptionKey: "vet.feature.recordsDesc" },
-              { titleKey: "vet.feature.consultations", descriptionKey: "vet.feature.consultationsDesc" },
-              { titleKey: "vet.feature.plans", descriptionKey: "vet.feature.plansDesc" },
-              { titleKey: "vet.feature.vaccinations", descriptionKey: "vet.feature.vaccinationsDesc" },
-              { titleKey: "vet.feature.telemedicine", descriptionKey: "vet.feature.telemedicineDesc" },
-              { titleKey: "vet.feature.ai", descriptionKey: "vet.feature.aiDesc" },
-              { titleKey: "vet.feature.profile", descriptionKey: "vet.feature.profileDesc" },
-            ]}
-          />
+          <VetCareLink />
         </div>
       </WorkspaceLayout>
     </RoleGate>
   );
 }
+
+function VetCareLink() { const { t } = useTranslation(); return <Button asChild><Link to="/vet/care">{t("care.title")}</Link></Button>; }
 
 /** Shows the signed-in vet's own verification record (RLS scopes it to them). */
 function VerificationStatusCard() {

@@ -1,0 +1,8 @@
+import {createFileRoute} from '@tanstack/react-router';
+import {useQuery,useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from '@/hooks/useTranslation';
+import {careHead,careService} from '@/lib/care';
+import {LoadingState} from '@/components/common/LoadingState';
+import {Button} from '@/components/ui/button';
+export const Route=createFileRoute('/_authenticated/admin/reports')({head:()=>careHead('Conversation safety reports','Review submitted safety reports without accessing private consultation records or messages.'),component:ReportsPage});
+function ReportsPage(){const {t}=useTranslation();const qc=useQueryClient();const q=useQuery({queryKey:['care','reports'],queryFn:careService.reports,retry:1});return <div className="grid gap-5"><h2 className="text-xl font-semibold">{t('care.reports')}</h2>{q.isPending?<LoadingState/>:q.isError?<Button onClick={()=>void q.refetch()}>{t('common.retry')}</Button>:q.data.length?q.data.map(r=><article key={r.id} className="grid gap-3 rounded-md border border-border p-4"><p className="text-xs text-muted-foreground">{r.id} · {r.created_at}</p><p className="whitespace-pre-wrap break-words">{r.reason}</p><p className="text-xs text-muted-foreground">{r.reporter_id} → {r.reported_id}</p>{r.status==='submitted'?<Button className="w-fit" onClick={()=>void careService.reviewReport(r.id).then(()=>qc.invalidateQueries({queryKey:['care','reports']}))}>{t('care.review')}</Button>:<p>{t('care.reviewed')}</p>}</article>):<p>{t('care.empty')}</p>}</div>;}

@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useTranslation } from "@/hooks/useTranslation";
 import { displayName, livestockKeys, livestockService, RECORD_TYPES, SPECIES, STATUSES } from "@/lib/livestock";
 import type { TranslationKey } from "@/locales";
+import { careHead } from "@/lib/care";
 
 const ALL = "all";
 const searchSchema = z.object({
@@ -25,6 +26,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/farmer/livestock/")({
+  head: () => careHead("My livestock", "Search and manage your private individual and group livestock records."),
   validateSearch: searchSchema,
   component: LivestockListPage,
 });

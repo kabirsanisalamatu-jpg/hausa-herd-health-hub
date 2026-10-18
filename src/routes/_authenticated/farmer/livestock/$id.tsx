@@ -17,10 +17,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useTranslation } from "@/hooks/useTranslation";
 import { describeAge, displayName, LivestockError, livestockKeys, livestockService } from "@/lib/livestock";
 import type { TranslationKey } from "@/locales";
+import { careHead } from "@/lib/care";
 
 const searchSchema = z.object({ notice: z.enum(["created", "updated"]).optional().catch(undefined) });
 
 export const Route = createFileRoute("/_authenticated/farmer/livestock/$id")({
+  head: () => careHead("Livestock health profile", "Your private livestock profile, health history, vaccination and treatment records."),
   validateSearch: searchSchema,
   component: LivestockDetailPage,
 });

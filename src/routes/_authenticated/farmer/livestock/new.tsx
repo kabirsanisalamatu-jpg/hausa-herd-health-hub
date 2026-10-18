@@ -4,8 +4,10 @@ import { LivestockForm } from "@/components/livestock/LivestockForm";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
 import { EMPTY_FORM, LivestockError, livestockKeys, livestockService } from "@/lib/livestock";
+import { careHead } from "@/lib/care";
 
 export const Route = createFileRoute("/_authenticated/farmer/livestock/new")({
+  head: () => careHead("Register livestock", "Register your individual animal or livestock group privately on AgriVet OS."),
   component: NewLivestockPage,
 });
 

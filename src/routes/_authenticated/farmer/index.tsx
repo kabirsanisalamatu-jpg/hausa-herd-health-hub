@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export const Route = createFileRoute("/_authenticated/farmer/")({
+  head: () => ({ meta: [{ title: "Farm overview — AgriVet OS" }, { name: "description", content: "Your livestock overview, saved health reminders and veterinary care." }, { property: "og:title", content: "Farm overview — AgriVet OS" }, { property: "og:description", content: "Your livestock overview, saved health reminders and veterinary care." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: FarmerHome,
 });
 
@@ -33,11 +34,10 @@ function FarmerHome() {
         <HealthSummary />
       </section>
       <section aria-labelledby="coming-heading" className="grid gap-4">
+        <Button asChild variant="outline" className="w-fit"><Link to="/farmer/care">{t("care.title")}</Link></Button>
         <h2 id="coming-heading" className="text-lg font-semibold">{t("farmerHome.comingTitle")}</h2>
         <ComingSoonGrid
           items={[
-            { titleKey: "farmer.feature.askVet", descriptionKey: "farmer.feature.askVetDesc" },
-            { titleKey: "farmer.feature.ai", descriptionKey: "farmer.feature.aiDesc" },
             { titleKey: "farmer.feature.marketplace", descriptionKey: "farmer.feature.marketplaceDesc" },
             { titleKey: "farmer.feature.farm", descriptionKey: "farmer.feature.farmDesc" },
           ]}

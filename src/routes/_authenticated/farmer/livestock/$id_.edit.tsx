@@ -6,8 +6,10 @@ import { LivestockForm } from "@/components/livestock/LivestockForm";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
 import { fromRow, LivestockError, livestockKeys, livestockService } from "@/lib/livestock";
+import { careHead } from "@/lib/care";
 
 export const Route = createFileRoute("/_authenticated/farmer/livestock/$id_/edit")({
+  head: () => careHead("Edit livestock", "Update your own livestock profile on AgriVet OS."),
   component: EditLivestockPage,
 });
 

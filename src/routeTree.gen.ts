@@ -25,10 +25,13 @@ import { Route as AuthenticatedVetRouteImport } from './routes/_authenticated/ve
 import { Route as VeterinariansIndexRouteImport } from './routes/veterinarians.index'
 import { Route as VeterinariansVetIdRouteImport } from './routes/veterinarians.$vetId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
 import { Route as AuthenticatedAdminVeterinariansRouteImport } from './routes/_authenticated/admin/veterinarians'
 import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin/waitlist'
 import { Route as AuthenticatedFarmerIndexRouteImport } from './routes/_authenticated/farmer/index'
+import { Route as AuthenticatedFarmerCareRouteImport } from './routes/_authenticated/farmer/care'
 import { Route as AuthenticatedFarmerVaccinationsRouteImport } from './routes/_authenticated/farmer/vaccinations'
+import { Route as AuthenticatedVetCareRouteImport } from './routes/_authenticated/vet_.care'
 import { Route as AuthenticatedFarmerLivestockIndexRouteImport } from './routes/_authenticated/farmer/livestock/index'
 import { Route as AuthenticatedFarmerLivestockIdRouteImport } from './routes/_authenticated/farmer/livestock/$id'
 import { Route as AuthenticatedFarmerLivestockNewRouteImport } from './routes/_authenticated/farmer/livestock/new'
@@ -114,6 +117,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminVeterinariansRoute =
   AuthenticatedAdminVeterinariansRouteImport.update({
     id: '/veterinarians',
@@ -132,12 +141,22 @@ const AuthenticatedFarmerIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedFarmerRouteRoute,
   } as any)
+const AuthenticatedFarmerCareRoute = AuthenticatedFarmerCareRouteImport.update({
+  id: '/care',
+  path: '/care',
+  getParentRoute: () => AuthenticatedFarmerRouteRoute,
+} as any)
 const AuthenticatedFarmerVaccinationsRoute =
   AuthenticatedFarmerVaccinationsRouteImport.update({
     id: '/vaccinations',
     path: '/vaccinations',
     getParentRoute: () => AuthenticatedFarmerRouteRoute,
   } as any)
+const AuthenticatedVetCareRoute = AuthenticatedVetCareRouteImport.update({
+  id: '/vet_/care',
+  path: '/vet/care',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFarmerLivestockIndexRoute =
   AuthenticatedFarmerLivestockIndexRouteImport.update({
     id: '/livestock/',
@@ -178,9 +197,12 @@ export interface FileRoutesByFullPath {
   '/vet': typeof AuthenticatedVetRoute
   '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
   '/veterinarians/': typeof VeterinariansIndexRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/farmer/care': typeof AuthenticatedFarmerCareRoute
   '/farmer/vaccinations': typeof AuthenticatedFarmerVaccinationsRoute
+  '/vet/care': typeof AuthenticatedVetCareRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/farmer/': typeof AuthenticatedFarmerIndexRoute
   '/farmer/livestock/$id': typeof AuthenticatedFarmerLivestockIdRoute
@@ -201,9 +223,12 @@ export interface FileRoutesByTo {
   '/vet': typeof AuthenticatedVetRoute
   '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
   '/veterinarians': typeof VeterinariansIndexRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/farmer/care': typeof AuthenticatedFarmerCareRoute
   '/farmer/vaccinations': typeof AuthenticatedFarmerVaccinationsRoute
+  '/vet/care': typeof AuthenticatedVetCareRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/farmer': typeof AuthenticatedFarmerIndexRoute
   '/farmer/livestock/$id': typeof AuthenticatedFarmerLivestockIdRoute
@@ -228,9 +253,12 @@ export interface FileRoutesById {
   '/_authenticated/vet': typeof AuthenticatedVetRoute
   '/veterinarians/$vetId': typeof VeterinariansVetIdRoute
   '/veterinarians/': typeof VeterinariansIndexRoute
+  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/veterinarians': typeof AuthenticatedAdminVeterinariansRoute
   '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/_authenticated/farmer/care': typeof AuthenticatedFarmerCareRoute
   '/_authenticated/farmer/vaccinations': typeof AuthenticatedFarmerVaccinationsRoute
+  '/_authenticated/vet_/care': typeof AuthenticatedVetCareRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/farmer/': typeof AuthenticatedFarmerIndexRoute
   '/_authenticated/farmer/livestock/$id': typeof AuthenticatedFarmerLivestockIdRoute
@@ -255,9 +283,12 @@ export interface FileRouteTypes {
     | '/vet'
     | '/veterinarians/$vetId'
     | '/veterinarians/'
+    | '/admin/reports'
     | '/admin/veterinarians'
     | '/admin/waitlist'
+    | '/farmer/care'
     | '/farmer/vaccinations'
+    | '/vet/care'
     | '/admin/'
     | '/farmer/'
     | '/farmer/livestock/$id'
@@ -278,9 +309,12 @@ export interface FileRouteTypes {
     | '/vet'
     | '/veterinarians/$vetId'
     | '/veterinarians'
+    | '/admin/reports'
     | '/admin/veterinarians'
     | '/admin/waitlist'
+    | '/farmer/care'
     | '/farmer/vaccinations'
+    | '/vet/care'
     | '/admin'
     | '/farmer'
     | '/farmer/livestock/$id'
@@ -304,9 +338,12 @@ export interface FileRouteTypes {
     | '/_authenticated/vet'
     | '/veterinarians/$vetId'
     | '/veterinarians/'
+    | '/_authenticated/admin/reports'
     | '/_authenticated/admin/veterinarians'
     | '/_authenticated/admin/waitlist'
+    | '/_authenticated/farmer/care'
     | '/_authenticated/farmer/vaccinations'
+    | '/_authenticated/vet_/care'
     | '/_authenticated/admin/'
     | '/_authenticated/farmer/'
     | '/_authenticated/farmer/livestock/$id'
@@ -441,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/veterinarians': {
       id: '/_authenticated/admin/veterinarians'
       path: '/veterinarians'
@@ -462,12 +506,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFarmerIndexRouteImport
       parentRoute: typeof AuthenticatedFarmerRouteRoute
     }
+    '/_authenticated/farmer/care': {
+      id: '/_authenticated/farmer/care'
+      path: '/care'
+      fullPath: '/farmer/care'
+      preLoaderRoute: typeof AuthenticatedFarmerCareRouteImport
+      parentRoute: typeof AuthenticatedFarmerRouteRoute
+    }
     '/_authenticated/farmer/vaccinations': {
       id: '/_authenticated/farmer/vaccinations'
       path: '/vaccinations'
       fullPath: '/farmer/vaccinations'
       preLoaderRoute: typeof AuthenticatedFarmerVaccinationsRouteImport
       parentRoute: typeof AuthenticatedFarmerRouteRoute
+    }
+    '/_authenticated/vet_/care': {
+      id: '/_authenticated/vet_/care'
+      path: '/vet/care'
+      fullPath: '/vet/care'
+      preLoaderRoute: typeof AuthenticatedVetCareRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/farmer/livestock/': {
       id: '/_authenticated/farmer/livestock/'
@@ -501,6 +559,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminVeterinariansRoute: typeof AuthenticatedAdminVeterinariansRoute
   AuthenticatedAdminWaitlistRoute: typeof AuthenticatedAdminWaitlistRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -508,6 +567,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
     AuthenticatedAdminVeterinariansRoute: AuthenticatedAdminVeterinariansRoute,
     AuthenticatedAdminWaitlistRoute: AuthenticatedAdminWaitlistRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -519,6 +579,7 @@ const AuthenticatedAdminRouteRouteWithChildren =
   )
 
 interface AuthenticatedFarmerRouteRouteChildren {
+  AuthenticatedFarmerCareRoute: typeof AuthenticatedFarmerCareRoute
   AuthenticatedFarmerVaccinationsRoute: typeof AuthenticatedFarmerVaccinationsRoute
   AuthenticatedFarmerIndexRoute: typeof AuthenticatedFarmerIndexRoute
   AuthenticatedFarmerLivestockIdRoute: typeof AuthenticatedFarmerLivestockIdRoute
@@ -529,6 +590,7 @@ interface AuthenticatedFarmerRouteRouteChildren {
 
 const AuthenticatedFarmerRouteRouteChildren: AuthenticatedFarmerRouteRouteChildren =
   {
+    AuthenticatedFarmerCareRoute: AuthenticatedFarmerCareRoute,
     AuthenticatedFarmerVaccinationsRoute: AuthenticatedFarmerVaccinationsRoute,
     AuthenticatedFarmerIndexRoute: AuthenticatedFarmerIndexRoute,
     AuthenticatedFarmerLivestockIdRoute: AuthenticatedFarmerLivestockIdRoute,
@@ -551,6 +613,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedVetRoute: typeof AuthenticatedVetRoute
+  AuthenticatedVetCareRoute: typeof AuthenticatedVetCareRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -560,6 +623,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedVetRoute: AuthenticatedVetRoute,
+  AuthenticatedVetCareRoute: AuthenticatedVetCareRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

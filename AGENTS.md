@@ -11,6 +11,12 @@
 
 ## Architecture rules
 
+- Veterinary care uses `careService` and constrained `care_*` RPCs; existing farmer tables keep owner-only RLS and shared reads use a scoped projection RPC — prevents shared records leaking into original farmer lists or summaries.
+- Care appointments use published immutable slots with transaction locks and reservation uniqueness; identity, timestamps and state transitions are database derived — prevents concurrent double booking and forged participants.
+- Notes, prescriptions, audit events and actual administrations are append-only, with superseding corrections; professional writes recheck approval and current sharing — preserves attribution without altering farmer originals.
+- Secret-backed AI/video operations use authenticated server functions and server-only request helpers; clinical permissions are rechecked before privileged persistence — keeps credentials and private records out of the client bundle.
+- The existing `/vet` URL stays a leaf; `/vet/care` uses an un-nested route and its own role shell — preserves existing navigation without rewriting the original workspace.
+
 - All user-facing text goes through `t()` from `useTranslation()`; dictionaries live in `src/locales/<lang>/common.ts` — keeps the Hausa-first/English-fallback contract in one place.
 - Language state lives in `src/contexts/LanguageContext.tsx` and persists under the `agrivet_language` localStorage key — single source of truth, later syncable with `profiles.preferred_language`.
 - Reusable non-shadcn UI lives in `src/components/common/`, shells in `src/layouts/` — keeps `src/components/ui/` as untouched shadcn primitives.
