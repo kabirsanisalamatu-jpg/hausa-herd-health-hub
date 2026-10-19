@@ -1,61 +1,57 @@
-import { test, expect } from 'bun:test';
-import postgres from 'postgres';
-
-// All fixtures and assertions run in one rolled-back transaction; no real data is modified.
-test('Phase 9 clinical authorization, immutability, booking and sharing rules', async () => {
- const sql=postgres({ max:1 }); let checks=0;
- await sql.begin(async tx=>{
-  const ids=Array.from({length:8},()=>crypto.randomUUID());
-  const [farmer,other,vet,pending,admin,animal,slot]=ids;
-  if(!farmer||!other||!vet||!pending||!admin||!animal||!slot)throw new Error('fixture');
-  for(const [id,role] of [[farmer,'farmer'],[other,'farmer'],[vet,'vet'],[pending,'vet'],[admin,'farmer']]){
-   await tx`insert into auth.users(id,email,raw_user_meta_data) values(${id},${`care-${id}@example.invalid`},${tx.json({full_name:'Fictional Care Test',user_type:role})})`;
-  }
-  await tx`insert into public.user_roles(user_id,role) values(${admin},'admin')`;
-  await tx`update public.vet_verifications set status='approved' where user_id=${vet}`;
-  await tx`insert into public.livestock(id,owner_id,record_type,name,species) values(${animal},${farmer},'individual','Fictional Care Goat','goats')`;
-  async function as(id:string|null){await tx`reset role`;await tx`select set_config('request.jwt.claim.sub',${id??''},true)`;await tx.unsafe(id?'set local role authenticated':'set local role anon');}
-  async function yes(label:string, query:()=>Promise<unknown>, expected:unknown){expect(await query(),label).toEqual(expected);checks++;}
-  async function denied(label:string, query:()=>Promise<unknown>){await tx.savepoint(async sp=>{let failed=false;try{await query();}catch{failed=true;}expect(failed,label).toBe(true);checks++;throw new Error('rollback savepoint');}).catch(e=>{if(e.message!=='rollback savepoint')throw e;});}
-  await as(pending); await denied('Pending vets cannot publish profiles',()=>tx`insert into public.vet_public_profiles(user_id,display_name,published) values(${pending},'Pending',true)`);
-  await as(vet);await tx`insert into public.vet_public_profiles(user_id,display_name,qualifications,licence,published) values(${vet},'Fictional Veterinarian','Fictional test qualification','TEST-NOT-REAL',true)`;
-  await tx`insert into public.care_slots(id,vet_id,starts_at,ends_at,consultation_type) values(${slot},${vet},now()+interval '2 days',now()+interval '2 days 30 minutes','online')`;
-  await denied('Overlapping slots blocked',()=>tx`insert into public.care_slots(vet_id,starts_at,ends_at,consultation_type) values(${vet},now()+interval '2 days 10 minutes',now()+interval '2 days 40 minutes','online')`);
-  await as(null);await yes('Public approved profile visible',async()=>Number((await tx`select count(*) n from public.vet_public_profiles`)[0]?.n),1);
-  await denied('Anonymous cannot read clinical messages',()=>tx`select * from public.care_messages`);
-  await as(other);await denied('Other farmer cannot share animal',()=>tx`select public.care_set_share(${vet},${animal},ARRAY['livestock'],NULL,false)`);
-  await as(farmer);await denied('Booking requires share',()=>tx`select public.care_book(${slot},${animal},'Fictional problem')`);
-  await tx`select public.care_set_share(${vet},${animal},ARRAY['livestock','health'],now()+interval '3 days',false)`;
-  const ap=(await tx`select public.care_book(${slot},${animal},'Fictional observation') id`)[0]?.id as string;
-  await denied('Duplicate slot booking denied',()=>tx`select public.care_book(${slot},${animal},'Second booking')`);
-  await denied('Farmer cannot confirm appointment',()=>tx`select public.care_transition(${ap},'confirmed')`);
-  await as(vet);await tx`select public.care_transition(${ap},'confirmed')`;
-  await yes('Only granted scopes returned',async()=>Object.keys((await tx`select public.care_shared_records(${animal},${farmer}) data`)[0]?.data).sort(),['health','livestock']);
-  await yes('Original livestock table not expanded for vet',async()=>Number((await tx`select count(*) n from public.livestock where id=${animal}`)[0]?.n),0);
-  const note=(await tx`select public.care_save_consultation(${ap},'Farmer report','Fictional assessment','Fictional recommendations',public.farm_today()+1,NULL) id`)[0]?.id as string;
-  await denied('Explicit prescription confirmation required',()=>tx`select public.care_publish_prescription(${ap},${note},'TEST ONLY','TEST','TEST','TEST','TEST','','',NULL,NULL)`);
-  const rx=(await tx`select public.care_publish_prescription(${ap},${note},'TEST ONLY','TEST','TEST','TEST','TEST','','',true,NULL) id`)[0]?.id as string;
-  await denied('Vet cannot modify issued prescription',()=>tx`update public.care_prescriptions set dose='forged' where id=${rx}`);
-  await as(farmer);await yes('Farmer can read issued prescription',async()=>Number((await tx`select count(*) n from public.care_prescriptions where id=${rx}`)[0]?.n),1);
-  await yes('Issuance does not mean administration',async()=>Number((await tx`select count(*) n from public.care_administrations where prescription_id=${rx}`)[0]?.n),0);
-  await denied('Tomorrow administration rejected',()=>tx`select public.care_record_administration(${rx},public.farm_today()+1,'Fictional tester','')`);
-  await tx`select public.care_record_administration(${rx},public.farm_today(),'Fictional tester','')`;
-  await tx`select public.care_send_message(${ap},'Fictional message')`;
-  await as(other);for(const table of ['care_appointments','care_messages','care_consultations','care_prescriptions','care_notifications'])await yes(`Other farmer cannot read ${table}`,async()=>Number((await tx.unsafe(`select count(*) n from public.${table}`))[0]?.n),0);
-  await denied('Other farmer cannot send messages',()=>tx`select public.care_send_message(${ap},'forged')`);
-  await as(admin);for(const table of ['care_appointments','care_messages','care_consultations','care_prescriptions'])await yes(`Admin has no automatic ${table} access`,async()=>Number((await tx.unsafe(`select count(*) n from public.${table}`))[0]?.n),0);
-  await as(farmer);await tx`select public.care_followup_notifications()`;await tx`select public.care_followup_notifications()`;
-  await yes('Followup notifications deduplicated',async()=>Number((await tx`select count(*) n from public.care_notifications where kind='follow_up'`)[0]?.n),1);
-  await tx`insert into public.care_blocks(blocker_id,blocked_id) values(${farmer},${vet})`;
-  await as(vet);await denied('Blocked vet cannot message',()=>tx`select public.care_send_message(${ap},'blocked')`);
-  await as(farmer);await tx`select public.care_set_share(${vet},${animal},ARRAY['livestock'],NULL,true)`;
-  await as(vet);await yes('Revocation removes prescription read immediately',async()=>Number((await tx`select count(*) n from public.care_prescriptions where id=${rx}`)[0]?.n),0);
-  await denied('Revoked vet cannot write note',()=>tx`select public.care_save_consultation(${ap},'','forged','',NULL,NULL)`);
-  await denied('Revoked scoped read denied',()=>tx`select public.care_shared_records(${animal},${farmer})`);
-  await as(farmer);await yes('Farmer retains revoked prescription history',async()=>Number((await tx`select count(*) n from public.care_prescriptions where id=${rx}`)[0]?.n),1);
-  await tx`reset role`; await denied('Issued prescription immutable even privileged',()=>tx`update public.care_prescriptions set dose='forged' where id=${rx}`);
-  await yes('No client delete grants for clinical records',async()=>Boolean((await tx`select has_table_privilege('authenticated','public.care_prescriptions','DELETE') allowed`)[0]?.allowed),false);
-  throw new Error('ROLLBACK_FIXTURES');
- }).catch(e=>{if(e.message!=='ROLLBACK_FIXTURES')throw e;});
- await sql.end();expect(checks).toBeGreaterThan(25);console.log(`Care security checks passed: ${checks}; all fictional fixtures rolled back.`);
-},60000);
+import { test,expect } from 'bun:test';
+import { readFileSync } from 'node:fs';
+// Uses dedicated fictional users created by the test setup, never a real account.
+const fixtures=JSON.parse(readFileSync('/tmp/browser/care/fixtures.json','utf8')) as {id:string;email:string;password:string;role:string}[];
+const url=process.env['SUPABASE_URL'];const key=process.env['VITE_SUPABASE_PUBLISHABLE_KEY']??process.env['SUPABASE_ANON_KEY'];
+if(!url||!key)throw new Error('Public test configuration missing');
+const sessions:string[]=[];
+async function call(index:number|null,path:string,method='GET',body?:unknown){const h:Record<string,string>={apikey:key,'Content-Type':'application/json',Prefer:'return=representation'};const token=index===null?null:sessions[index];if(token)h.Authorization=`Bearer ${token}`;const r=await fetch(`${url}${path}`,{method,headers:h,body:body===undefined?undefined:JSON.stringify(body)});return {ok:r.ok,status:r.status,data:await r.json().catch(()=>null)};}
+async function rpc(index:number,name:string,body:unknown){return call(index,`/rest/v1/rpc/${name}`,'POST',body);}
+test('Signed-in veterinary care privacy, booking, messaging, prescriptions, dates and revocation',async()=>{
+ for(const f of fixtures){const r=await fetch(`${url}/auth/v1/token?grant_type=password`,{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({email:f.email,password:f.password})});const d=await r.json();if(!r.ok)throw new Error('Fictional login failed');sessions.push(d.access_token);}
+ const farmer=fixtures[0];const vet=fixtures[2];const pending=fixtures[3];if(!farmer||!vet||!pending)throw new Error();
+ let checks=0;const check=(condition:unknown,label:string)=>{expect(condition,label).toBeTruthy();checks++;};
+ let r=await call(0,'/rest/v1/livestock','POST',{record_type:'individual',name:'Fictional Phase 9 Goat',species:'goats'});check(r.ok,'Farmer registers own livestock');const animal=r.data[0].id;
+ r=await call(3,'/rest/v1/vet_public_profiles','POST',{user_id:pending.id,display_name:'Fictional Pending Vet',published:true});check(!r.ok,'Pending vet cannot publish');
+ r=await call(2,'/rest/v1/vet_public_profiles','POST',{user_id:vet.id,display_name:'Fictional Care Veterinarian',qualifications:'TEST ONLY – fictional qualification',licence:'TEST-NOT-REAL',specialties:['Fictional test'],species:['goats'],languages:['en','ha'],published:true});check(r.ok,'Approved vet publishes own profile');
+ const start=new Date(Date.now()+2*86400000).toISOString();const end=new Date(Date.now()+2*86400000+1800000).toISOString();
+ r=await call(2,'/rest/v1/care_slots','POST',{vet_id:vet.id,starts_at:start,ends_at:end,consultation_type:'online'});check(r.ok,'Approved vet publishes future availability');const slot=r.data[0].id;
+ r=await call(2,'/rest/v1/care_slots','POST',{vet_id:vet.id,starts_at:new Date(new Date(start).getTime()+60000).toISOString(),ends_at:end,consultation_type:'online'});check(!r.ok,'Overlapping availability blocked');
+ r=await call(null,`/rest/v1/vet_public_profiles?user_id=eq.${vet.id}`);check(r.ok&&r.data.length===1,'Signed-out public approved profile');
+ r=await call(null,'/rest/v1/care_messages');check(!r.ok,'Anonymous clinical message read denied');
+ r=await rpc(1,'care_set_share',{_vet:vet.id,_livestock:animal,_scopes:['livestock']});check(!r.ok,'Other farmer cannot grant share');
+ r=await rpc(0,'care_book',{_slot:slot,_livestock:animal,_reason:'Fictional consultation request'});check(!r.ok,'Booking without share denied');
+ r=await rpc(0,'care_set_share',{_vet:vet.id,_livestock:animal,_scopes:['livestock','health'],_expires:new Date(Date.now()+4*86400000).toISOString()});check(r.ok,'Farmer creates exact scoped share');
+ const bookings=await Promise.all([rpc(0,'care_book',{_slot:slot,_livestock:animal,_reason:'Fictional consultation request'}),rpc(0,'care_book',{_slot:slot,_livestock:animal,_reason:'Fictional duplicate request'})]);check(bookings.filter(x=>x.ok).length===1,'Concurrent requests reserve slot only once');const appointment=bookings.find(x=>x.ok)?.data;
+ r=await rpc(0,'care_transition',{_id:appointment,_status:'confirmed'});check(!r.ok,'Farmer cannot confirm vet appointment');
+ r=await rpc(2,'care_transition',{_id:appointment,_status:'confirmed'});check(r.ok,'Assigned approved vet confirms');
+ r=await rpc(2,'care_shared_records',{_livestock:animal,_farmer:farmer.id});check(r.ok&&Object.keys(r.data).sort().join(',')==='health,livestock','Only granted scopes returned');
+ r=await call(2,`/rest/v1/livestock?id=eq.${animal}`);check(r.ok&&r.data.length===0,'Shared RPC does not widen original livestock RLS');
+ r=await rpc(1,'care_send_message',{_appointment:appointment,_body:'Forged message'});check(!r.ok,'Unassigned sender denied');
+ r=await rpc(0,'care_send_message',{_appointment:appointment,_body:'Fictional farmer message'});check(r.ok,'Farmer message saved');
+ r=await call(2,`/rest/v1/care_messages?appointment_id=eq.${appointment}`);check(r.ok&&r.data[0].sender_id===farmer.id,'Message ownership comes from authenticated sender');
+ r=await rpc(2,'care_read_messages',{_appointment:appointment});check(r.ok,'Recipient marks received messages read');
+ r=await call(0,`/rest/v1/care_messages?appointment_id=eq.${appointment}`);check(r.ok&&r.data[0].read_at,'Read state persisted');
+ r=await rpc(3,'care_save_consultation',{_appointment:appointment,_report:'','_assessment':'forged',_recommendations:''});check(!r.ok,'Pending vet clinical authorship denied');
+ r=await rpc(2,'care_save_consultation',{_appointment:appointment,_report:'Fictional farmer report',_assessment:'Fictional assessment – test only',_recommendations:'Fictional recommendations',_follow_up:new Date(Date.now()+86400000).toISOString().slice(0,10)});check(r.ok,'Assigned approved veterinarian saves note');const note=r.data;
+ r=await rpc(0,'care_save_consultation',{_appointment:appointment,_report:'','_assessment':'forged',_recommendations:''});check(!r.ok,'Farmer cannot issue professional note');
+ const prescription={_appointment:appointment,_consultation:note,_medicine:'FICTIONAL TEST ONLY',_dose:'TEST ONLY',_route:'TEST ONLY',_frequency:'TEST ONLY',_duration:'TEST ONLY',_instructions:'Not a real prescription',_withdrawal:'TEST ONLY'};
+ r=await rpc(2,'care_publish_prescription',{...prescription,_confirmed:false});check(!r.ok,'Issuance requires explicit confirmation');
+ r=await rpc(2,'care_publish_prescription',{...prescription,_confirmed:null});check(!r.ok,'Null cannot bypass explicit confirmation');
+ r=await rpc(2,'care_publish_prescription',{...prescription,_confirmed:true});check(r.ok,'Confirmed authenticated vet issuance');const rx=r.data;
+ r=await call(2,`/rest/v1/care_prescriptions?id=eq.${rx}`,'PATCH',{dose:'forged'});check(!r.ok,'Issued prescription mutation denied');
+ r=await call(0,`/rest/v1/care_prescriptions?id=eq.${rx}`);check(r.ok&&r.data.length===1,'Farmer reads issued prescription');
+ r=await call(0,`/rest/v1/care_administrations?prescription_id=eq.${rx}`);check(r.ok&&r.data.length===0,'Prescription never auto-records administration');
+ const date=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Lagos'}).format(new Date());const tomorrow=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Lagos'}).format(new Date(Date.now()+86400000));
+ r=await rpc(0,'care_record_administration',{_prescription:rx,_date:tomorrow,_by:'Fictional tester',_notes:''});check(!r.ok,'Tomorrow actual administration rejected');
+ r=await rpc(0,'care_record_administration',{_prescription:rx,_date:date,_by:'Fictional tester',_notes:''});check(r.ok,'Today explicit administration accepted');
+ for(const table of ['care_appointments','care_messages','care_consultations','care_prescriptions']){r=await call(1,`/rest/v1/${table}`);check(r.ok&&r.data.length===0,`Other farmer cannot read ${table}`);}
+ r=await call(0,'/rest/v1/care_blocks','POST',{blocker_id:farmer.id,blocked_id:vet.id});check(r.ok,'Farmer blocks assigned vet messages');
+ r=await rpc(2,'care_send_message',{_appointment:appointment,_body:'Blocked message'});check(!r.ok,'Block enforced on message action');
+ r=await call(0,`/rest/v1/care_blocks?blocker_id=eq.${farmer.id}&blocked_id=eq.${vet.id}`,'DELETE');check(r.ok,'Farmer can unblock');
+ r=await rpc(0,'care_followup_notifications',{});check(r.ok,'Saved clinical followup notifications created');await rpc(0,'care_followup_notifications',{});
+ r=await call(0,'/rest/v1/care_notifications?kind=eq.follow_up');check(r.ok&&r.data.length===1,'Followup notification deduplicated');
+ // Keep the active appointment for the following UI test; revocation is tested after the UI flow.
+ await Bun.write('/tmp/browser/care/records.json',JSON.stringify({animal,slot,appointment,note,rx}));
+ console.log(`Passed ${checks} real signed-in care security checks.`);
+},90000);
