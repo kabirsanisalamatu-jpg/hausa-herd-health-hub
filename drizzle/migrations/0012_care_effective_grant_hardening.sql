@@ -1,0 +1,10 @@
+REVOKE ALL ON public.vet_public_profiles,public.care_shares,public.care_audit,public.care_slots,public.care_appointments,public.care_notifications,public.care_blocks,public.care_messages,public.care_reports,public.care_consultations,public.care_prescriptions,public.care_administrations,public.care_ai_requests,public.care_ai_service_state,public.care_video_rooms FROM anon,authenticated;
+GRANT SELECT ON public.vet_public_profiles,public.care_slots TO anon,authenticated;
+GRANT INSERT,UPDATE ON public.vet_public_profiles,public.care_slots TO authenticated;
+GRANT SELECT ON public.care_shares,public.care_audit,public.care_appointments,public.care_notifications,public.care_messages,public.care_consultations,public.care_prescriptions,public.care_administrations,public.care_ai_requests TO authenticated;
+GRANT UPDATE(read_at) ON public.care_notifications TO authenticated;
+GRANT SELECT,INSERT,DELETE ON public.care_blocks TO authenticated;
+GRANT SELECT,INSERT ON public.care_reports TO authenticated;
+REVOKE ALL ON FUNCTION public.care_book(uuid,uuid,text),public.care_can_access(uuid),public.care_clinical_author(uuid),public.care_followup_notifications(),public.care_has_share(uuid,uuid,uuid,text),public.care_not_blocked(uuid,uuid),public.care_publish_prescription(uuid,uuid,text,text,text,text,text,text,text,boolean,uuid),public.care_read_messages(uuid),public.care_record_administration(uuid,date,text,text),public.care_required_confirmation(boolean),public.care_reschedule(uuid,uuid),public.care_review_report(uuid),public.care_save_consultation(uuid,text,text,text,date,uuid),public.care_send_message(uuid,text),public.care_set_share(uuid,uuid,text[],timestamptz,boolean),public.care_shared_records(uuid,uuid),public.care_transition(uuid,text) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.care_issue_prescription(uuid,uuid,text,text,text,text,text,text,text,boolean,uuid) FROM PUBLIC,anon,authenticated;
+REVOKE ALL ON FUNCTION public.care_clinical_confirmation(),public.care_immutable(),public.care_notification_read(),public.care_profile_write(),public.care_slot_write(),public.care_validate_slot_publication() FROM PUBLIC,anon,authenticated;
