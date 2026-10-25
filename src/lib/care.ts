@@ -56,7 +56,7 @@ export const careService = {
   async block(me: string, other: string, blocked: boolean) { if (blocked) result(await supabase.from('care_blocks').insert({ blocker_id: me, blocked_id: other })); else result(await supabase.from('care_blocks').delete().eq('blocker_id',me).eq('blocked_id',other)); },
   async report(me: string, other: string, appointment: string, reason: string) { result(await supabase.from('care_reports').insert({ reporter_id:me,reported_id:other,appointment_id:appointment,reason })); },
   async aiHistory() { return result(await supabase.from('care_ai_requests').select('*').order('created_at', { ascending:false }).limit(50)) ?? []; },
-  async reports() { return result(await supabase.from('care_reports').select('id,reporter_id,reported_id,appointment_id,reason,status,created_at').order('created_at', { ascending:false })) ?? []; },
+  async reports() { return result(await supabase.rpc('care_report_metadata')) ?? []; },
   async reviewReport(id: string) { result(await supabase.rpc('care_review_report', { _id:id })); },
 };
 export function careDate(iso: string, language: string) {
