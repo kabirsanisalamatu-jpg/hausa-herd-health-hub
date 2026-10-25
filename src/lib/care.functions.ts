@@ -50,7 +50,9 @@ export const videoAccess = createServerFn({ method:'POST' }).middleware([require
     const now = Date.now();
     if (!approved || !share || !notBlocked || now<new Date(a.starts_at).getTime()-15*60000 || now>new Date(a.ends_at).getTime()) return { ok:false as const,key:'care.video.forbidden' };
     const key = process.env['DAILY_API_KEY'];
-    if (!key) return { ok:false as const,key:'care.video.unconfigured' };
+    // Fail closed even if a key is added: immediate provider ejection has not
+    // been implemented and verified for consent withdrawal or cancellation.
+    if (!key || process.env['CAREVET_VIDEO_REVOCATION_VERIFIED'] !== 'true') return { ok:false as const,key:'care.video.unconfigured' };
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const expiry = Math.floor(new Date(a.ends_at).getTime()/1000);
     const name = `agrivet-${a.id}`;

@@ -1,0 +1,4 @@
+DROP POLICY IF EXISTS "Admin report metadata only" ON public.care_reports;
+CREATE OR REPLACE FUNCTION public.care_report_metadata() RETURNS TABLE(id uuid,reporter_id uuid,reported_id uuid,status text,created_at timestamptz) LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN IF auth.uid() IS NULL OR NOT (public.has_role(auth.uid(),'admin') OR public.has_role(auth.uid(),'super_admin')) THEN RAISE EXCEPTION 'forbidden' USING ERRCODE='42501'; END IF; RETURN QUERY SELECT r.id,r.reporter_id,r.reported_id,r.status,r.created_at FROM public.care_reports r ORDER BY r.created_at DESC; END $$;
+REVOKE ALL ON FUNCTION public.care_report_metadata() FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.care_report_metadata() TO authenticated;
