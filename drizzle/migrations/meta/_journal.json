@@ -92,6 +92,13 @@
       "when": 1792415783360,
       "tag": "0012_care_effective_grant_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792964893299,
+      "tag": "0013_care_report_metadata_privacy",
+      "breakpoints": true
     }
   ]
 }

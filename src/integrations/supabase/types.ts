@@ -1218,6 +1218,16 @@ export type Database = {
         }
         Returns: string
       }
+      care_report_metadata: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          reported_id: string
+          reporter_id: string
+          status: string
+        }[]
+      }
       care_required_confirmation: {
         Args: { _confirmed: boolean }
         Returns: boolean
