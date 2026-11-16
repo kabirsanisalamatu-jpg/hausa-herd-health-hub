@@ -1,7 +1,7 @@
 # Veterinary care integrations
 
 ## Video
-Video uses Daily private rooms only when `DAILY_API_KEY` is stored as a server secret. No key is bundled or placed in a `VITE_` variable. There is no configured Daily connection yet, so live calls must not be reported as tested.
+Video is disabled until immediate provider-side revocation is implemented and tested. A `DAILY_API_KEY` alone does not enable calls. No key is bundled or placed in a `VITE_` variable. There is no configured Daily connection yet, so live calls must not be reported as tested.
 
 The server verifies both appointment participation and current veterinary approval, sharing permission, blocking state, confirmed online status and the scheduled join window. Private room tokens expire within five minutes; room access requires renewal after expiry. Recording is disabled. Existing room URLs alone grant no access. Published video testing must cover two participants, token renewal, room expiry, mobile camera/microphone permissions and revoked sharing. Already-open third-party sessions require provider enforcement to guarantee immediate ejection after revocation; this is not yet implemented and video must remain unconfigured until that is addressed.
 
