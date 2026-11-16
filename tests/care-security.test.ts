@@ -13,7 +13,7 @@ test('Signed-in veterinary care privacy, booking, messaging, prescriptions, date
  let checks=0;const check=(condition:unknown,label:string)=>{expect(condition,label).toBeTruthy();checks++;};
  let r=await call(0,'/rest/v1/livestock','POST',{record_type:'individual',name:'Fictional Phase 9 Goat',species:'goats'});check(r.ok,'Farmer registers own livestock');const animal=r.data[0].id;
  r=await call(3,'/rest/v1/vet_public_profiles','POST',{user_id:pending.id,display_name:'Fictional Pending Vet',published:true});check(!r.ok,'Pending vet cannot publish');
- r=await call(2,'/rest/v1/vet_public_profiles','POST',{user_id:vet.id,display_name:'Fictional Care Veterinarian',qualifications:'TEST ONLY – fictional qualification',licence:'TEST-NOT-REAL',specialties:['Fictional test'],species:['goats'],languages:['en','ha'],published:true});check(r.ok,'Approved vet publishes own profile');
+ r=await call(2,`/rest/v1/vet_public_profiles?user_id=eq.${vet.id}`,'PATCH',{display_name:'Fictional Care Veterinarian',qualifications:'TEST ONLY – fictional qualification',licence:'TEST-NOT-REAL',specialties:['Fictional test'],species:['goats'],languages:['en','ha'],published:true});check(r.ok&&r.data.length===1,'Approved vet updates own profile');
  const start=new Date(Date.now()+2*86400000).toISOString();const end=new Date(Date.now()+2*86400000+1800000).toISOString();
  r=await call(2,'/rest/v1/care_slots','POST',{vet_id:vet.id,starts_at:start,ends_at:end,consultation_type:'online'});check(r.ok,'Approved vet publishes future availability');const slot=r.data[0].id;
  r=await call(2,'/rest/v1/care_slots','POST',{vet_id:vet.id,starts_at:new Date(new Date(start).getTime()+60000).toISOString(),ends_at:end,consultation_type:'online'});check(!r.ok,'Overlapping availability blocked');
@@ -50,8 +50,17 @@ test('Signed-in veterinary care privacy, booking, messaging, prescriptions, date
  r=await rpc(2,'care_send_message',{_appointment:appointment,_body:'Blocked message'});check(!r.ok,'Block enforced on message action');
  r=await call(0,`/rest/v1/care_blocks?blocker_id=eq.${farmer.id}&blocked_id=eq.${vet.id}`,'DELETE');check(r.ok,'Farmer can unblock');
  r=await rpc(0,'care_followup_notifications',{});check(r.ok,'Saved clinical followup notifications created');await rpc(0,'care_followup_notifications',{});
- r=await call(0,'/rest/v1/care_notifications?kind=eq.follow_up');check(r.ok&&r.data.length===1,'Followup notification deduplicated');
- // Keep the active appointment for the following UI test; revocation is tested after the UI flow.
+ r=await call(0,`/rest/v1/care_notifications?kind=eq.follow_up&appointment_id=eq.${appointment}`);check(r.ok&&r.data.length===1,'Followup notification deduplicated');
+ r=await call(0,`/rest/v1/care_prescriptions?id=eq.${rx}`,'DELETE');check(!r.ok,'Farmer deletion grant denied');
+ r=await call(0,`/rest/v1/care_prescriptions?id=eq.${rx}`);check(r.ok&&r.data.length===1,'Prescription retained after delete attempt');
+ r=await rpc(0,'care_report_metadata',{});check(!r.ok,'Farmer cannot read admin report metadata');
+ r=await rpc(2,'care_issue_prescription',{...prescription,_confirmed:null});check(!r.ok,'Internal issuance RPC bypass denied');
+ r=await rpc(0,'care_set_share',{_vet:vet.id,_livestock:animal,_scopes:['livestock'],_revoke:true});check(r.ok,'Farmer revokes sharing');
+ r=await call(2,`/rest/v1/care_prescriptions?id=eq.${rx}`);check(r.ok&&r.data.length===0,'Revocation removes vet clinical read immediately');
+ r=await rpc(2,'care_shared_records',{_livestock:animal,_farmer:farmer.id});check(!r.ok,'Revoked shared-record RPC denied');
+ r=await rpc(2,'care_save_consultation',{_appointment:appointment,_report:'',_assessment:'forged',_recommendations:''});check(!r.ok,'Revoked veterinarian clinical writes denied');
+ r=await call(0,`/rest/v1/care_prescriptions?id=eq.${rx}`);check(r.ok&&r.data.length===1,'Farmer retains history after revocation');
+ r=await rpc(0,'care_set_share',{_vet:vet.id,_livestock:animal,_scopes:['livestock','health']});check(r.ok,'Farmer can explicitly renew sharing');
  await Bun.write('/tmp/browser/care/records.json',JSON.stringify({animal,slot,appointment,note,rx}));
  console.log(`Passed ${checks} real signed-in care security checks.`);
 },90000);
