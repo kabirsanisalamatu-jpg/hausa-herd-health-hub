@@ -86,7 +86,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <Brand />
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label={t("nav.menu")}>
+          <nav className="hidden items-center gap-1 2xl:flex" aria-label={t("nav.menu")}>
             <Link to="/veterinarians" className="px-3 py-3 text-sm font-medium">{t("care.directory")}</Link>
             <a href="/#features" className="rounded-md px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.features")}</a>
             <a href="/#how-it-works" className="rounded-md px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.howItWorks")}</a>
@@ -94,7 +94,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <a href="/demo" title={t("nav.comingSoon")} className="rounded-md px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.demo")}</a>
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-2 2xl:flex">
             <LanguageSwitcher />
             {user ? (
               <>
@@ -118,7 +118,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           <Button
             variant="ghost"
             size="icon"
-            className="min-h-11 min-w-11 lg:hidden"
+            className="min-h-11 min-w-11 2xl:hidden"
             aria-label={menuOpen ? t("nav.closeMenu") : t("nav.menu")}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
@@ -128,7 +128,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           </Button>
         </div>
         {menuOpen ? (
-          <nav id="mobile-navigation" className="border-t border-border bg-background px-4 py-4 lg:hidden" aria-label={t("nav.menu")}>
+          <nav id="mobile-navigation" className="border-t border-border bg-background px-4 py-4 2xl:hidden" aria-label={t("nav.menu")}>
             <div className="mx-auto grid max-w-7xl gap-1">
               <Link to="/veterinarians" onClick={closeMenu} className="flex min-h-11 items-center px-3 text-sm font-medium">{t("care.directory")}</Link>
               <a href="/#features" onClick={closeMenu} className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-accent">{t("nav.features")}</a>
